@@ -7,30 +7,55 @@ import { JwtAuthGuard } from '$app/shared/auth/jwt-auth.guard';
 import { LoggerMiddleware } from '$core/middleware/logger.middleware';
 import { AdminModule } from '$app/admin/admin.module';
 import { ConfigModule } from '@nestjs/config';
+import { ClientModule } from './client/client.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import ShopType from '$database/entities/ShopType';
-import Order from '$database/entities/Order';
-import OrderDetail from '$database/entities/OrderDetail';
-import OrderCart from '$database/entities/OrderCart';
 import Notification from '$database/entities/Notification';
+import NotificationType from '$database/entities/NotificationType';
+import Order from '$database/entities/Order';
+import OrderCart from '$database/entities/OrderCart';
+import OrderDetail from '$database/entities/OrderDetail';
 import Product from '$database/entities/Product';
 import ProductLine from '$database/entities/ProductLine';
-import UserRole from '$database/entities/UserRole';
-import User from '$database/entities/User';
-import { ClientModule } from './client/client.module';
-import { ProductModule } from './product/products.module';
-import { ProductLineModule } from './productline/productlines.module';
-import { NotificationModule } from './notification/notification.module';
+import ShopType from '$database/entities/ShopType';
 import TransferringMethod from '$database/entities/TransferringMethod';
-import NotificationType from '$database/entities/NotificationType';
+import User from '$database/entities/User';
+import UserRole from '$database/entities/UserRole';
+import Judge from '$database/entities/Judge';
+import Like from '$database/entities/Like';
+import Voucher from '$database/entities/Voucher';
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: process.env.MYSQL_HOST,
+      port: +process.env.MYSQL_PORT,
+      username: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASS,
+      database: process.env.MYSQL_DBNAME,
+      supportBigNumbers: false,
+      synchronize: true, // Do not use synchronize
+      logging: true,
+      charset: 'utf8mb4',
+      entities: [
+        Notification,
+        NotificationType,
+        Order,
+        OrderCart,
+        OrderDetail,
+        Product,
+        ProductLine,
+        ShopType,
+        TransferringMethod,
+        User,
+        UserRole,
+        Judge,
+        Like,
+        Voucher,
+      ],
+    }),
     AdminModule,
     ClientModule,
-    ProductModule,
-    ProductLineModule,
-    NotificationModule
   ],
   providers: [
     {

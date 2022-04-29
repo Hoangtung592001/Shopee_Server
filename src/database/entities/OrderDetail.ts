@@ -1,15 +1,50 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm"
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import Order from './Order';
 
-@Entity({ name: 'order_details' })
+@Entity({ name: 'order_detail' })
 export default class OrderDetail {
-    @PrimaryGeneratedColumn({ name: "id", type: "bigint", unsigned: true})
-    id: number;
-    @Column({ name: "order_id", type: "bigint", unsigned: true})
-    orderId: number;
-    @Column({ name: "product_code", type: "varchar", length: 255, nullable: false})
-    productCode: string;
-    @Column({ name: "quantity_order", type: "int", unsigned: true, nullable: false})
-    quantityOrder: number;
-    @Column({ name: "customer_id", type: "bigint", unsigned: true, nullable: false})
-    customerId: number;
+  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  id: number;
+
+  @Column({ name: 'order_id', type: 'bigint', unsigned: true })
+  orderId: number;
+
+  @Column({
+    name: 'product_code',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
+  productCode: string;
+
+  @Column({
+    name: 'quantity_order',
+    type: 'int',
+    unsigned: true,
+    nullable: false,
+  })
+  quantityOrder: number;
+
+  @Column({
+    name: 'price_each',
+    type: 'double',
+    unsigned: true,
+    nullable: false,
+  })
+  priceEach: number;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Relation                                  */
+  /* -------------------------------------------------------------------------- */
+
+  @ManyToOne(() => Order)
+  @JoinColumn({ name: 'id', referencedColumnName: 'orderdetailId' })
+  order: Order;
 }

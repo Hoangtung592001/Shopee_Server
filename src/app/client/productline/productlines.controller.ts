@@ -19,7 +19,7 @@ import {
 } from '$types/interfaces';
 import { Public } from '$core/decorators/public.decorator';
 
-@Controller('product-lines')
+@Controller('product-line')
 export class ProductLineController {
   constructor(private readonly productLineService: ProductLineService) {}
 

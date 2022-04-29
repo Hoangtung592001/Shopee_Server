@@ -9,7 +9,7 @@ import {
 import User from './User';
 import NotificationType from './NotificationType';
 import TransferringMethod from './TransferringMethod';
-@Entity({ name: 'notifications' })
+@Entity({ name: 'notification' })
 export default class Notification {
   @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
   id: number;
@@ -52,10 +52,6 @@ export default class Notification {
   })
   receiverId: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'receiver_id', referencedColumnName: 'id' })
-  receiver: User;
-
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt: string | Date;
 
@@ -76,4 +72,12 @@ export default class Notification {
     nullable: false,
   })
   image: string;
+
+  /* -------------------------------------------------------------------------- */
+  /*                                  Relation                                  */
+  /* -------------------------------------------------------------------------- */
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'receiver_id', referencedColumnName: 'id' })
+  receiver: User;
 }

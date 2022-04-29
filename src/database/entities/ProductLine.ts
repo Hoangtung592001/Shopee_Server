@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm"
 
-@Entity({ name: 'product_lines' })
+@Entity({ name: 'product_line' })
 export default class ProductLine {
     @PrimaryGeneratedColumn({ name: "id", type: "bigint", unsigned: true })
     id: number;

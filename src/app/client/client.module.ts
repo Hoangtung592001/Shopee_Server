@@ -1,14 +1,29 @@
 import { Module } from '@nestjs/common';
-import { ClientService } from './client.service';
-import { ClientController } from './client.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import User from '$database/entities/User';
 import { AuthModule } from '$shared/auth/auth.module';
-import OrderCart from '$database/entities/OrderCart';
-
+import { ProductModule } from './product/product.module';
+import { ProductLineModule } from './productline/productlines.module';
+import { NotificationModule } from './notification/notification.module';
+import { ClientAuthModule } from './client-auth/client-auth.module';
+import { MemberModule } from './member/member.module';
+import { VoucherModule } from './voucher/voucher.module';
+import { LikeModule } from './like/like.module';
+import { JudgeModule } from './judge/judge.module';
+import { OrderCartModule } from './order-cart/order-cart.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, OrderCart]), AuthModule],
-  controllers: [ClientController],
-  providers: [ClientService]
+  imports: [
+    AuthModule,
+    ProductModule,
+    ProductLineModule,
+    NotificationModule,
+    MemberModule,
+    ClientAuthModule,
+    VoucherModule,
+    LikeModule,
+    JudgeModule,
+    OrderCartModule
+  ],
+  controllers: [],
+  providers: [],
+  exports: [],
 })
 export class ClientModule {}

@@ -4,11 +4,6 @@ import { Connection, Repository } from 'typeorm';
 import ProductLine from '$database/entities/ProductLine';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from '$shared/auth/auth.service';
-import { compare, hash } from 'bcrypt';
-import { Exception, Unauthorized } from '$helpers/exception';
-import { ErrorCode } from '$types/enums';
-import config from '$config';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class ProductLineService {

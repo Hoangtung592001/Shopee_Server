@@ -110,14 +110,6 @@ export interface IProductLine {
   textDescription: string;
 }
 
-export interface purchasingProduct {
-  productCode: string;
-  quantityOrder: number;
-  customerId: number;
-}
-
-export interface purchasingProductList extends Array<purchasingProduct> {}
-
 export interface IProductLineList extends Array<IProductLine> {}
 
 // Test Interface For Elastic Search

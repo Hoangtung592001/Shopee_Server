@@ -6,42 +6,34 @@ import {
   Patch,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
-  UseFilters,
-  ForbiddenException,
-  ParseIntPipe,
-  UsePipes,
   Req,
-  Query,
 } from '@nestjs/common';
-import { ProductService } from './products.service';
+import { ProductService } from './product.service';
 import {
   IUserReq,
-  IPayload,
-  IInputChangePassword,
-  IRefreshTokenPakage,
   IProduct,
-  IRawProduct,
   IInfoProduct,
 } from '$types/interfaces';
 import { Public } from '$core/decorators/public.decorator';
 import { Request } from 'express';
-import { validate } from '$helpers/validate';
 import { Roles } from '$core/decorators/roles.decorator';
-import { Role, TokenType } from '$types/enums';
+import { Role } from '$types/enums';
+import { UserData } from '$core/decorators/user.decorator';
+import { OrderProductDto } from './dto/OrderProduct.dto';
+import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
 
 interface IIdParam {
   id: string;
 }
 
-@Controller('products')
+@Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Public()
   @Get('get-all-products')
   async getAllProducts(@Req() req: Request) {
+    console.log(111);
     return this.productService.getAllProducts();
   }
 
@@ -75,10 +67,19 @@ export class ProductController {
 
   @Public()
   @Patch('change-product-info/:id')
-  async changeInfoProduct(@Body() body: IInfoProduct, @Param() params, @Req() req: IUserReq) {
+  async changeInfoProduct(
+    @Body() body: IInfoProduct,
+    @Param() params,
+    @Req() req: IUserReq,
+  ) {
     const productId = +params.id;
     const productInfo = body;
     const { tokenType, ...user } = req.user;
     this.productService.changeInfoProduct(productId, productInfo, user);
+  }
+
+  @Post('order-products')
+  orderProducts(@UserData() member: Express.User, @Body() body: OrderProductDto) {
+    return this.productService.orderProducts(member.id, body);
   }
 }

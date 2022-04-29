@@ -1,42 +1,61 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from "typeorm"
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import RoleUser from '$database/entities/UserRole';
-import Notification from "./Notification";
-@Entity({ name: 'users' })
+import Notification from './Notification';
+@Entity({ name: 'user' })
 export default class User {
-    @PrimaryGeneratedColumn({ name: "id", type: "bigint", unsigned: true })
-    id: number
+  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
+  id: number;
 
-    @Column({ name: "email", type: "varchar", length: 255, nullable: false })
-    email: string
+  @Column({ name: 'email', type: 'varchar', length: 255, nullable: false })
+  email: string;
 
-    @Column({ name: "password", type: "varchar", length: 255, nullable: false })
-    password: string
+  @Column({ name: 'password', type: 'varchar', length: 255, nullable: false })
+  password: string;
 
-    @Column({ name: "username", type: "varchar", length: 255, nullable: false })
-    username: string
+  @Column({ name: 'username', type: 'varchar', length: 255, nullable: false })
+  username: string;
 
-    @Column({ name: "status", type: "boolean" })
-    status: boolean;
+  @Column({
+    name: 'status',
+    type: 'boolean',
+    comment: '1: active, 2: inactive',
+    default: 1,
+  })
+  status: boolean;
 
-    @Column({ name: "date_of_birth", type: "date", nullable: true })
-    dateOfBirth: string
-    
-    @Column({ name: "refresh_token", type: "varchar", length: 1000, default: null })
-    refreshToken: string
+  @Column({ name: 'date_of_birth', type: 'date', nullable: true })
+  dateOfBirth: string;
 
-    @CreateDateColumn({ name: 'created_at', type: 'datetime' })
-    createdAt: string | Date
+  @Column({
+    name: 'refresh_token',
+    type: 'varchar',
+    length: 1000,
+    default: null,
+  })
+  refreshToken: string;
 
-    @Column({ name: "role_id", type: "bigint", unsigned: true, default: 1 })
-    roleId: number
+  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
+  createdAt: string | Date;
 
-    @ManyToOne(() => RoleUser)
-    @JoinColumn({ name: 'role_id', referencedColumnName: 'id'})
-    role: RoleUser;
+  @Column({ name: 'role_id', type: 'bigint', unsigned: true, default: 1 })
+  roleId: number;
 
-    @OneToMany(
-        () => Notification,
-        (Notification) => Notification.receiver,
-      )
-      Notifications: Notification[];
+  /* -------------------------------------------------------------------------- */
+  /*                                  Relation                                  */
+  /* -------------------------------------------------------------------------- */
+
+  @ManyToOne(() => RoleUser)
+  @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
+  role: RoleUser;
+
+  @OneToMany(() => Notification, (Notification) => Notification.receiver)
+  notifications: Notification[];
 }

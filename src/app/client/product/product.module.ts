@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { ProductService } from './products.service';
-import { ProductController } from './products.controller';
+import { ProductService } from './product.service';
+import { ProductController } from './product.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '$shared/auth/auth.module';
 import Product from '$database/entities/Product';
-// import { ElasticsearchService } from '@nestjs/elasticsearch';
-// import { SearchModule } from '$app/search/search.module';
-
+import OrderCart from '$database/entities/OrderCart'
+import User from '$database/entities/User';
 @Module({
-  imports: [TypeOrmModule.forFeature([Product]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Product, OrderCart, User]), AuthModule],
   controllers: [ProductController],
   providers: [ProductService],
 })

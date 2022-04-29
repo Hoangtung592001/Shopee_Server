@@ -16,12 +16,12 @@ export default class NotificationType {
   })
   id: number;
 
+  @Column({ name: 'notification_name', type: 'varchar', length: 255 })
+  methodName: string;
+
   @OneToMany(
     () => Notification,
     (Notification) => Notification.notificationType,
   )
   Notifications: Notification[];
-
-  @Column({ name: 'notification_name', type: 'varchar', length: 255 })
-  methodName: string;
 }

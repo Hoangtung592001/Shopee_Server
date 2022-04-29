@@ -4,11 +4,10 @@ import { NotificationController } from './notification.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from '$shared/auth/auth.module';
 import Notification from '$database/entities/Notification';
-// import { ElasticsearchService } from '@nestjs/elasticsearch';
-// import { SearchModule } from '$app/search/search.module';
+import User from '$database/entities/User';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Notification]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Notification, User]), AuthModule],
   controllers: [NotificationController],
   providers: [NotificationService],
 })
