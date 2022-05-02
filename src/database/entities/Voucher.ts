@@ -30,6 +30,9 @@ export default class Like {
   @Column({ name: 'expired_at', type: 'datetime'})
   expiredAt: string | Date;
 
+  @CreateDateColumn({ name: 'created_at', type: 'datetime'})
+  createdAt: string | Date;
+
   @OneToMany(() => Order, order => order.voucher)
   order: Order[];
 }

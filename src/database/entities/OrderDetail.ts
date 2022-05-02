@@ -45,6 +45,6 @@ export default class OrderDetail {
   /* -------------------------------------------------------------------------- */
 
   @ManyToOne(() => Order)
-  @JoinColumn({ name: 'id', referencedColumnName: 'orderdetailId' })
+  @JoinColumn({ name: 'order_id', referencedColumnName: 'id' })
   order: Order;
 }

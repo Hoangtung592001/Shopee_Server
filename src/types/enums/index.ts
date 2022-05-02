@@ -23,7 +23,9 @@ export enum ErrorCode {
   Old_Password_Incorrect = 'Old_Password_Incorrect',
   Quantity_Invalid = 'Quantity_Invalid',
   Product_Not_Found = 'Product_Not_Found',
-  Delete_Judge_Invalid = 'Delete_Judge_Invalid'
+  Delete_Judge_Invalid = 'Delete_Judge_Invalid',
+  Not_Register_Shop = 'Not_Register_Shop',
+  Already_Register_Shop = 'Already_Register_Shop'
 }
 
 export enum Action {
@@ -37,6 +39,11 @@ export enum SearchIndex {
   Product = 'product',
 }
 
+export enum ShopType {
+  Normal = 1,
+  Mall = 2
+}
+
 export enum OrderStatus {
   Deleted = 0,
   Preparing = 1,
@@ -47,4 +54,14 @@ export enum OrderStatus {
 export enum CommonStatus {
   Inactive = 0,
   Active = 1
+}
+
+export enum ProductStatus {
+  Deleted = 0,
+  Active = 1,
+  SoldOff = 2
+}
+
+export enum TransferringMethod {
+  
 }

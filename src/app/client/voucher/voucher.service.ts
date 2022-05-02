@@ -14,6 +14,7 @@ export class VoucherService {
     @InjectRepository(Voucher)
     private readonly voucherRepository: Repository<Voucher>,
   ) {}
+  
   async getAllVouchers(memberId: number) {
     return this.voucherRepository.find({ where: { memberId: memberId, status: 1 }});
   }

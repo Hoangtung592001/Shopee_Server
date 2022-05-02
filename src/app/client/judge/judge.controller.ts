@@ -5,7 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete
+  Delete,
+  Query
 } from '@nestjs/common';
 import { JudgeService } from './judge.service';
 import {
@@ -13,6 +14,8 @@ import {
 import { Public } from '$core/decorators/public.decorator';
 import { UserData } from '$core/decorators/user.decorator';
 import { PostJudgeDto } from './dto/post-judge.dto';
+import { GetJudgeDto } from './dto/get-judge.dto';
+import { assignLoadMore } from '$helpers/utils';
 
 @Controller('judge')
 export class JudgeController {
@@ -28,9 +31,16 @@ export class JudgeController {
     return this.judgeService.deleteJudge(member.id, +id);
   }
 
+  @Get('get-judge')
+  getJudge(@UserData() member: Express.User, @Query() query: GetJudgeDto) {
+    assignLoadMore(query);
+    return this.judgeService.getJudge(member.id, query);
+  }
+
   @Public()
   @Get('/:id')
   getAllJudgesOfProduct(@Param('id') productCode: string) {
     return this.judgeService.getAllJudgesOfProduct(+productCode);
   }
+
 }

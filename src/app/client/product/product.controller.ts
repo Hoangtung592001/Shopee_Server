@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Req,
+  Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
 import {
@@ -21,6 +22,8 @@ import { Role } from '$types/enums';
 import { UserData } from '$core/decorators/user.decorator';
 import { OrderProductDto } from './dto/OrderProduct.dto';
 import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
+import { FindAllMemberModelDto, loadMoreFindAllMemberModelDto } from './dto/GetAllProductsDto';
+import { assignLoadMore, assignPaging } from '$helpers/utils';
 
 interface IIdParam {
   id: string;
@@ -32,11 +35,18 @@ export class ProductController {
 
   @Public()
   @Get('get-all-products')
-  async getAllProducts(@Req() req: Request) {
-    console.log(111);
-    return this.productService.getAllProducts();
+  async getAllProducts(@Req() req: Request, @Query() query: FindAllMemberModelDto) {
+    assignPaging(query);
+    return this.productService.getAllProducts(query);
   }
 
+  // @Public()
+  // @Get('get-all-products')
+  // async getAllProducts(@Req() req: Request, @Query() query: loadMoreFindAllMemberModelDto) {
+  //   assignLoadMore(query);
+  //   return this.productService.getAllProducts(query);
+  // }
+  
   @Post('add-products')
   async addProduct(@Req() req: IUserReq) {
     const body = req.body as IProduct;
@@ -78,8 +88,14 @@ export class ProductController {
     this.productService.changeInfoProduct(productId, productInfo, user);
   }
 
-  @Post('order-products')
-  orderProducts(@UserData() member: Express.User, @Body() body: OrderProductDto) {
-    return this.productService.orderProducts(member.id, body);
+  @Post('recent-visited/:id')
+  recentVisited(@UserData() member: Express.User, @Param('id') id: string) {
+    return this.productService.recentVisited(member.id, +id);
+  }
+
+  @Get('get-recent-visited')
+  getRecentVisitedProduct(@UserData() member: Express.User, @Query() query: loadMoreFindAllMemberModelDto) {
+    assignLoadMore(query);
+    return this.productService.getRecentVisitedProduct(member.id, query);
   }
 }

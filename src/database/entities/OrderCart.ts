@@ -30,14 +30,6 @@ export default class OrderCart {
   quantityOrder: number;
 
   @Column({
-    name: 'price_each',
-    type: 'double',
-    unsigned: true,
-    nullable: false,
-  })
-  priceEach: number;
-
-  @Column({
     name: 'customer_id',
     type: 'bigint',
     unsigned: true,
@@ -63,6 +55,4 @@ export default class OrderCart {
   @ManyToOne(() => Product)
   @JoinColumn({ name: 'product_code', referencedColumnName: 'id' })
   product: Product;
-
-  
 }

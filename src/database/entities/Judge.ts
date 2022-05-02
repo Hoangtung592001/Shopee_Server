@@ -1,3 +1,4 @@
+import { CommonStatus } from '$types/enums';
 import {
   Column,
   CreateDateColumn,
@@ -7,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Product from './Product';
+import User from './User';
 @Entity({ name: 'judge' })
 export default class Judge {
   @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
@@ -26,12 +28,15 @@ export default class Judge {
   @Column({ name: 'content', type: 'varchar', length: 5000 })
   content: string;
 
+  @Column({ name: 'stars', type: 'tinyint', unsigned: true })
+  stars: number;
+
   @Column({
     name: 'status',
     type: 'int',
     unsigned: true,
     comment: '0: Inactive, 1: active',
-    default: 1,
+    default: CommonStatus.Active,
   })
   status: number;
 
@@ -48,4 +53,9 @@ export default class Judge {
   @ManyToOne(() => Product)
   @JoinColumn({ name: 'product_code', referencedColumnName: 'id' })
   product: Product;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'member_id', referencedColumnName: 'id' })
+  user: User;
+
 }

@@ -16,13 +16,15 @@ import OrderCart from '$database/entities/OrderCart';
 import OrderDetail from '$database/entities/OrderDetail';
 import Product from '$database/entities/Product';
 import ProductLine from '$database/entities/ProductLine';
-import ShopType from '$database/entities/ShopType';
 import TransferringMethod from '$database/entities/TransferringMethod';
 import User from '$database/entities/User';
 import UserRole from '$database/entities/UserRole';
 import Judge from '$database/entities/Judge';
 import Like from '$database/entities/Like';
 import Voucher from '$database/entities/Voucher';
+import UserShopType from '$database/entities/UserShopType';
+import UserShop from '$database/entities/UserShop';
+import ProductRecent from '$database/entities/ProductRecent';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -45,7 +47,9 @@ import Voucher from '$database/entities/Voucher';
         OrderDetail,
         Product,
         ProductLine,
-        ShopType,
+        ProductRecent,
+        UserShopType,
+        UserShop,
         TransferringMethod,
         User,
         UserRole,

@@ -14,7 +14,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from '$shared/auth/auth.service';
 import { compare, hash } from 'bcrypt';
 import { Exception, Unauthorized } from '$helpers/exception';
-import { ErrorCode } from '$types/enums';
+import { ErrorCode, ProductStatus } from '$types/enums';
 import config from '$config';
 import { JwtService } from '@nestjs/jwt';
 import { SearchIndex } from '$types/enums';
@@ -35,67 +35,75 @@ export class OrderCartService {
   ) {}
 
   async addProductsToCart(memberId: number, product: AddProductsToCartDto) {
-    try {
-      const productInDb = await this.productRepository.findOne({
-        where: { id: product.productCode },
-      });
-      if (!!!productInDb) {
-        throw new Exception(ErrorCode.Product_Not_Found, 'Product not found!');
-      }
-      if (productInDb.quantityInStock < product.quantityOrder) {
-        throw new Exception(
-          ErrorCode.Quantity_Invalid,
-          'Quantity you want is invalid!',
-        );
-      }
-      const addingProduct = {
-        customerId: memberId,
-        priceEach: productInDb.priceEach,
-        ...product,
-      };
-      return this.orderCartRepository.save(addingProduct);
-    } catch (error) {
-      throw new Exception(ErrorCode.Unknown_Error, error.message);
+    const productInDb = await this.productRepository.findOne({
+      where: {
+        id: product.productCode,
+        status: ProductStatus.Active || ProductStatus.SoldOff,
+      },
+    });
+
+    if (!!!productInDb) {
+      throw new Exception(
+        ErrorCode.Product_Not_Found,
+        'Product is deleted! Please try another one!',
+      );
     }
+    if (productInDb.status == ProductStatus.SoldOff) {
+      throw new Exception(
+        ErrorCode.Product_Not_Found,
+        'Product is sold off! Please try another!',
+      );
+    }
+
+    if (productInDb.quantityInStock < product.quantityOrder) {
+      throw new Exception(
+        ErrorCode.Quantity_Invalid,
+        'Quantity you want is invalid!',
+      );
+    }
+    const addingProduct = {
+      customerId: memberId,
+      ...product,
+    };
+
+    const productInCart = await this.orderCartRepository.findOne({ where: { customerId: memberId, productCode: product.productCode } });
+    if (!!productInCart) {
+      productInCart.quantityOrder += product.quantityOrder;
+      return this.orderCartRepository.save(productInCart);
+    }
+
+    return this.orderCartRepository.save(addingProduct);
   }
 
   async deleteProductFromCart(memberId: number, orderId: number) {
-    try {
-      const orderInCart = await this.orderCartRepository
-        .createQueryBuilder('oc')
-        .andWhere('oc.customer_id = :memberId AND order_id = :orderId', {
-          memberId: memberId,
-          orderId: orderId,
-        })
-        .getOne();
-      if (orderInCart.customerId !== memberId) {
-        throw new Exception(
-          ErrorCode.Unauthorized,
-          'You are not author of this order!',
-        );
-      }
-
-      return await this.orderCartRepository.save({
-        ...orderInCart,
-        status: 0,
-      });
-    } catch (error) {
-      throw new Exception(ErrorCode.Unknown_Error, error.message);
+    const orderInCart = await this.orderCartRepository
+      .createQueryBuilder('oc')
+      .andWhere('oc.customer_id = :memberId AND order_id = :orderId', {
+        memberId: memberId,
+        orderId: orderId,
+      })
+      .getOne();
+    if (orderInCart.customerId !== memberId) {
+      throw new Exception(
+        ErrorCode.Unauthorized,
+        'You are not author of this order!',
+      );
     }
+
+    return await this.orderCartRepository.save({
+      ...orderInCart,
+      status: 0,
+    });
   }
 
   async getAllOrderInCart(memberId: number) {
-    try {
-      return this.orderCartRepository
-        .createQueryBuilder('oc')
-        .innerJoinAndSelect('oc.product', 'product')
-        .where('oc.customer_id = :memberId AND status = 1', {
-          memberId: memberId,
-        })
-        .getOne();
-    } catch (error) {
-      throw new Exception(ErrorCode.Unknown_Error, error.message);
-    }
+    return this.orderCartRepository
+      .createQueryBuilder('oc')
+      .innerJoinAndSelect('oc.product', 'product')
+      .where('oc.customer_id = :memberId AND oc.status = 1', {
+        memberId: memberId,
+      })
+      .getMany();
   }
 
   async changeQuantityOrderOfProductInCart(
@@ -103,25 +111,24 @@ export class OrderCartService {
     productCode: number,
     quantity: number,
   ) {
-    try {
-      const productInCartInDb = await this.orderCartRepository
-        .createQueryBuilder('oc')
-        .innerJoinAndSelect('oc.product', 'product')
-        .where('oc.customer_id = :memberId AND status = 1 AND oc.productCode: productCode', {
+    const productInCartInDb = await this.orderCartRepository
+      .createQueryBuilder('oc')
+      .innerJoinAndSelect('oc.product', 'product')
+      .where(
+        'oc.customer_id = :memberId AND status = 1 AND oc.productCode: productCode',
+        {
           memberId: memberId,
-          productCode: productCode
-        })
-        .getOne();
-      if (productInCartInDb.product.quantityInStock < quantity) {
-        throw new Exception(
-          ErrorCode.Quantity_Invalid,
-          'Quantity you want is invalid!',
-        );
-      }
-      productInCartInDb.quantityOrder = quantity;
-      return this.orderCartRepository.save(productInCartInDb);
-    } catch (error) {
-      throw new Exception(ErrorCode.Unknown_Error, error.message);
+          productCode: productCode,
+        },
+      )
+      .getOne();
+    if (productInCartInDb.product.quantityInStock < quantity) {
+      throw new Exception(
+        ErrorCode.Quantity_Invalid,
+        'Quantity you want is invalid!',
+      );
     }
+    productInCartInDb.quantityOrder = quantity;
+    return this.orderCartRepository.save(productInCartInDb);
   }
 }

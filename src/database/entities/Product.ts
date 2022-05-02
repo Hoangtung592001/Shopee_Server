@@ -1,12 +1,16 @@
+import { ProductStatus } from '$types/enums';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import Judge from './Judge';
 import Like from './Like';
+import UserShop from './UserShop';
 
 @Entity({ name: 'product' })
 export default class Product {
@@ -50,6 +54,14 @@ export default class Product {
   discount: number;
 
   @Column({
+    name: 'status',
+    type: 'tinyint',
+    comment: '0: Deleted, 1: Active, 2: SoldOff',
+    default: ProductStatus.Active,
+  })
+  status: number;
+
+  @Column({
     name: 'sold_quantity',
     type: 'bigint',
     unsigned: true,
@@ -73,4 +85,7 @@ export default class Product {
   @OneToMany(() => Judge, (judge) => judge.product)
   judges: Judge[];
 
+  @ManyToOne(() => UserShop)
+  @JoinColumn({ name: 'seller_id', referencedColumnName: 'id' })
+  seller: UserShop
 }

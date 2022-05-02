@@ -9,6 +9,7 @@ import { VoucherModule } from './voucher/voucher.module';
 import { LikeModule } from './like/like.module';
 import { JudgeModule } from './judge/judge.module';
 import { OrderCartModule } from './order-cart/order-cart.module';
+import { OrderModule } from './order/order.module';
 @Module({
   imports: [
     AuthModule,
@@ -20,7 +21,8 @@ import { OrderCartModule } from './order-cart/order-cart.module';
     VoucherModule,
     LikeModule,
     JudgeModule,
-    OrderCartModule
+    OrderCartModule,
+    OrderModule
   ],
   controllers: [],
   providers: [],

@@ -12,6 +12,8 @@ import { MemberService } from './member.service';
 import {
   IUserReq,
 } from '$types/interfaces';
+import { UserData } from '$core/decorators/user.decorator';
+import { RegisterShopDto } from './dto/RegisterShopDto.dto';
 @Controller('member')
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
@@ -21,4 +23,8 @@ export class MemberController {
       return this.memberService.getPersonalInfo(user);
   }
 
+  @Post('register-shop')
+  registerShop(@Body() body: RegisterShopDto, @UserData() member: Express.User) {
+    return this.memberService.registerShop(member.id, body);
+  }
 }

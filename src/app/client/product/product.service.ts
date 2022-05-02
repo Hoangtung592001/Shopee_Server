@@ -4,25 +4,22 @@ import {
   IPrePayload,
   IProduct,
   IProductFull,
-  IProductLineList,
-  IProductList,
-  IRawProduct,
 } from '$types/interfaces';
 import { Connection, Repository } from 'typeorm';
 import Product from '$database/entities/Product';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from '$shared/auth/auth.service';
-import { compare, hash } from 'bcrypt';
-import { Exception, Unauthorized } from '$helpers/exception';
-import { ErrorCode } from '$types/enums';
-import config from '$config';
-import { JwtService } from '@nestjs/jwt';
-import { SearchIndex } from '$types/enums';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { Exception } from '$helpers/exception';
+import { ErrorCode, ProductStatus } from '$types/enums';
 import OrderCart from '$database/entities/OrderCart';
-import { OrderProductDto } from './dto/OrderProduct.dto';
-import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
-
+import {
+  FindAllMemberModelDto,
+  loadMoreFindAllMemberModelDto,
+} from './dto/GetAllProductsDto';
+import { returnLoadMore, returnPaging } from '$helpers/utils';
+import UserShop from '$database/entities/UserShop';
+import User from '$database/entities/User';
+import ProductRecent from '$database/entities/ProductRecent';
 @Injectable()
 export class ProductService {
   constructor(
@@ -32,22 +29,48 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(OrderCart)
     private readonly orderCartRepository: Repository<OrderCart>,
+    @InjectRepository(UserShop)
+    private readonly userShopRepository: Repository<UserShop>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(ProductRecent)
+    private readonly productRecentRepository: Repository<ProductRecent>,
   ) {}
 
-  async getAllProducts(): Promise<IProductList> {
-    const products =
-      (await this.productRepository.find()) as unknown as IProductList;
-    return products;
+  async getAllProducts(params: FindAllMemberModelDto) {
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('p')
+      .where('p.status != 0');
+    const [results, totalItems] = await queryBuilder
+      .skip(params.skip)
+      .take(params.pageSize)
+      .getManyAndCount();
+    return returnPaging(results, totalItems, params);
   }
 
-  async addProduct(
-    product: IProduct,
-    user: IPrePayload,
-  ): Promise<IProductFull> {
+  // async getAllProducts(params: loadMoreFindAllMemberModelDto) {
+  //   const queryBuilder = this.productRepository.createQueryBuilder('p');
+  //   if (params.takeAfter) {
+  //     queryBuilder.andWhere('p.id < :takeAfter', { takeAfter: params.takeAfter })
+  //   }
+  //   const results= await queryBuilder.orderBy('p.id', 'DESC').take(params.pageSize).getMany();
+  //   return returnLoadMore(results, params);
+  // }
+
+  async addProduct(product: IProduct, user: IPrePayload) {
     try {
+      const userHaveShop = await this.userShopRepository.findOne({
+        where: { ownerId: user.id },
+      });
+      if (!!!userHaveShop) {
+        throw new Exception(
+          ErrorCode.Not_Register_Shop,
+          "You don' have shop now! Please register first!",
+        );
+      }
       const savingProduct = {
         ...product,
-        sellerId: +user.id,
+        sellerId: userHaveShop.id,
       };
       const savedProduct = await this.productRepository.save(savingProduct);
       return savedProduct;
@@ -59,7 +82,7 @@ export class ProductService {
     }
   }
 
-  async getProduct(id: number): Promise<IProductFull> {
+  async getProduct(id: number) {
     try {
       const product = await this.productRepository.findOne({ id: id });
       return product;
@@ -71,10 +94,35 @@ export class ProductService {
     }
   }
 
-  async deleteProduct(id: number, user: IPrePayload): Promise<any> {
+  async deleteProduct(id: number, user: IPrePayload) {
     try {
-      const product = await this.productRepository.delete({ id: id });
-      return product;
+      const userHaveShop = await this.userShopRepository.findOne({
+        where: { ownerId: user.id },
+      });
+      if (!!!userHaveShop) {
+        throw new Exception(
+          ErrorCode.Not_Register_Shop,
+          "You don' have shop now! Please register first!",
+        );
+      }
+
+      const productInDb = await this.productRepository.findOne(id);
+
+      if (productInDb.sellerId != userHaveShop.id) {
+        throw new Exception(
+          ErrorCode.Forbidden_Resource,
+          'You are not owner of this products',
+        );
+      }
+
+      await this.productRepository.update(
+        { id: productInDb.id },
+        { status: ProductStatus.Deleted },
+      );
+
+      return {
+        success: true,
+      };
     } catch (error) {
       throw new Exception(
         ErrorCode.Unknown_Error,
@@ -87,8 +135,27 @@ export class ProductService {
     productId: number,
     productInfo: IInfoProduct,
     user: IPrePayload,
-  ): Promise<IProductFull> {
+  ) {
     try {
+      const userHaveShop = await this.userShopRepository.findOne({
+        where: { ownerId: user.id },
+      });
+      if (!!!userHaveShop) {
+        throw new Exception(
+          ErrorCode.Not_Register_Shop,
+          "You don' have shop now! Please register first!",
+        );
+      }
+
+      const productInDb = await this.productRepository.findOne(productId);
+
+      if (productInDb.sellerId != userHaveShop.id) {
+        throw new Exception(
+          ErrorCode.Forbidden_Resource,
+          'You are not owner of this products',
+        );
+      }
+
       const product = (await this.productRepository.update(
         { id: productId },
         productInfo,
@@ -102,46 +169,47 @@ export class ProductService {
     }
   }
 
-  async addProductsToCart(memberId: number, product: AddProductsToCartDto) {
-    try {
-      const productInDb = await this.productRepository.findOne({
-        where: { id: product.productCode },
-      });
-      if (!!!productInDb) {
-        throw new Exception(ErrorCode.Product_Not_Found, 'Product not found!');
-      }
-      if (productInDb.quantityInStock < product.quantityOrder) {
-        throw new Exception(
-          ErrorCode.Quantity_Invalid,
-          'Quantity you want is invalid!',
-        );
-      }
-      const addingProduct = {
-        customerId: memberId,
-        ...product,
-      };
-      return this.orderCartRepository.save(addingProduct as any as Product);
-    } catch (error) {
-      throw new Exception(ErrorCode.Unknown_Error, error.message);
-    }
-  }
-
-  async orderProducts(memberId: number, body: OrderProductDto) {
-    const productCodes = body.products.map((product) => {
-      return product.productCode;
+  async recentVisited(memberId: number, productCode: number) {
+    const productInDb = await this.productRepository.findOne({
+      where: { id: productCode },
     });
-    const products = await this.productRepository
-      .createQueryBuilder('q')
-      .where('q.id IN (:productCodes)', {
-        productCodes: productCodes,
-      })
-      .getMany();
-    let isMatchedQuantity = true;
-    for (var i = 0; i < products.length; i++) {
-      if (body.products[i].quantityOrder > products[i].quantityInStock) {
-         
-      }
+    if (!!!productInDb || productInDb.status == ProductStatus.Deleted) {
+      throw new Exception(
+        ErrorCode.Not_Found,
+        'Product you visited is not found!',
+      );
     }
-    return products;
+
+    return this.productRecentRepository.save({
+      visitorId: memberId,
+      productCode: productCode,
+    });
+  }
+  // async getAllProducts(params: loadMoreFindAllMemberModelDto) {
+  //   const queryBuilder = this.productRepository.createQueryBuilder('p');
+  //   if (params.takeAfter) {
+  //     queryBuilder.andWhere('p.id < :takeAfter', { takeAfter: params.takeAfter })
+  //   }
+  //   const results= await queryBuilder.orderBy('p.id', 'DESC').take(params.pageSize).getMany();
+  //   return returnLoadMore(results, params);
+  // }
+
+  async getRecentVisitedProduct(
+    memberId: number,
+    params: loadMoreFindAllMemberModelDto,
+  ) {
+    const queryBuilder = this.productRecentRepository.createQueryBuilder('pr');
+    if (params.takeAfter) {
+      queryBuilder.andWhere('pr.id < :takeAfter AND pr.visitor_id = :memberId', {
+        takeAfter: params.takeAfter,
+        memberId: memberId
+      });
+    }
+
+    const results = await queryBuilder
+      .orderBy('pr.id', 'DESC')
+      .take(params.pageSize)
+      .getMany();
+    return returnLoadMore(results, params);
   }
 }

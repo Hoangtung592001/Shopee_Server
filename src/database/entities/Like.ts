@@ -1,3 +1,4 @@
+import { CommonStatus } from '$types/enums';
 import {
   Column,
   CreateDateColumn,
@@ -23,7 +24,7 @@ export default class Like {
     type: 'int',
     unsigned: true,
     comment: '0: Inactive, 1: active',
-    default: 1,
+    default: CommonStatus.Active,
   })
   status: number;
 

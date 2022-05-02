@@ -6,15 +6,25 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import RoleUser from '$database/entities/UserRole';
 import Notification from './Notification';
+import UserShop from './UserShop';
+import { CommonStatus } from '$types/enums';
+import Judge from './Judge';
 @Entity({ name: 'user' })
 export default class User {
   @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
   id: number;
 
-  @Column({ name: 'email', type: 'varchar', length: 255, nullable: false })
+  @Column({
+    name: 'email',
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+    unique: true,
+  })
   email: string;
 
   @Column({ name: 'password', type: 'varchar', length: 255, nullable: false })
@@ -25,11 +35,11 @@ export default class User {
 
   @Column({
     name: 'status',
-    type: 'boolean',
-    comment: '1: active, 2: inactive',
-    default: 1,
+    type: 'tinyint',
+    comment: '1: active, 0: inactive',
+    default: CommonStatus.Active,
   })
-  status: boolean;
+  status: number;
 
   @Column({ name: 'date_of_birth', type: 'date', nullable: true })
   dateOfBirth: string;
@@ -52,10 +62,16 @@ export default class User {
   /*                                  Relation                                  */
   /* -------------------------------------------------------------------------- */
 
+  @OneToOne(() => UserShop)
+  shop: UserShop;
+
   @ManyToOne(() => RoleUser)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
   role: RoleUser;
 
   @OneToMany(() => Notification, (Notification) => Notification.receiver)
   notifications: Notification[];
+
+  @OneToMany(() => Judge, (judge) => judge.user)
+  judges: Judge[];
 }

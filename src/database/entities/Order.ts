@@ -31,9 +31,6 @@ export default class Order {
   @CreateDateColumn({ name: 'shipped_at', type: 'datetime', nullable: true })
   shippedAt: string | Date;
 
-  @Column({ name: 'comment', type: 'varchar', length: 1000, nullable: true })
-  comment: string;
-
   @Column({
     name: 'status',
     type: 'tinyint',
@@ -63,18 +60,19 @@ export default class Order {
   voucherId: number;
 
   @Column({
-    name: 'orderdetail_id',
-    type: 'bigint',
-    unsigned: true,
-  })
-  orderdetailId: number;
-
-  @Column({
     name: 'transferring_method_id',
     type: 'bigint',
     unsigned: true,
   })
   transferringMethodId: number;
+
+  @Column({
+    name: 'shipping_fee',
+    type: 'double',
+    unsigned: true,
+    nullable: true,
+  })
+  shippingFee: number;
 
 
   /* -------------------------------------------------------------------------- */
@@ -90,5 +88,5 @@ export default class Order {
   transferringMethod: TransferringMethod;
 
   @OneToMany(() => OrderDetail, (orderdetail) => orderdetail.order)
-  orderdetail: OrderDetail[];
+  orderdetails: OrderDetail[];
 }

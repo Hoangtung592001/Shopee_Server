@@ -6,8 +6,10 @@ import { AuthModule } from '$shared/auth/auth.module';
 import Product from '$database/entities/Product';
 import OrderCart from '$database/entities/OrderCart'
 import User from '$database/entities/User';
+import UserShop from '$database/entities/UserShop';
+import ProductRecent from '$database/entities/ProductRecent';
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, OrderCart, User]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Product, OrderCart, User, UserShop, ProductRecent]), AuthModule],
   controllers: [ProductController],
   providers: [ProductService],
 })
