@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TokenType } from '$types/enums';
 import config from '$config';
-import { IPayload, IPrePayload, IToken, ITokenPayload } from '$types/interfaces';
+import {
+  IPayload,
+  IPrePayload,
+  IToken,
+  ITokenPayload,
+} from '$types/interfaces';
 import { Repository } from 'typeorm';
 import User from '$database/entities/User';
 
@@ -12,8 +17,8 @@ export class AuthService {
 
   public generateAccessToken(input: IPrePayload): string {
     const payload = {
-        ...input
-    }
+      ...input,
+    };
     return this.jwtService.sign(
       { ...payload, tokenType: TokenType.ACCESS_TOKEN },
       {
@@ -25,8 +30,8 @@ export class AuthService {
 
   public generateRefreshToken(input: IPrePayload): string {
     const payload = {
-      ...input
-    }
+      ...input,
+    };
     return this.jwtService.sign(
       { ...payload, tokenType: TokenType.REFRESH_TOKEN },
       {
@@ -36,28 +41,38 @@ export class AuthService {
     );
   }
 
-  async verifyRefreshToken(refreshToken: string, userRepository: Repository<User>): Promise<IPayload | false> {
-      if (!refreshToken) {
-          return false;
-      }
+  async verifyRefreshToken(
+    refreshToken: string,
+    userRepository: Repository<User>,
+  ) {
+    if (!refreshToken) {
+      return false;
+    }
 
-      const isValid = this.unPackageRefreshOrAccessToken(refreshToken);
+    const isValid = await this.unPackageRefreshOrAccessToken(refreshToken);
+    console.log(isValid);
     if (!isValid) return false;
 
-    const hasRefreshToken = await userRepository.findOne({ where: { refreshToken: refreshToken }});
+
+    const hasRefreshToken = await userRepository.findOne({
+      where: { refreshToken: refreshToken },
+    });
     if (!hasRefreshToken) {
-        return false;
+      return false;
     }
     return isValid;
   }
 
-  async unPackageRefreshOrAccessToken(token: string): Promise<IPayload | false> {
-      try {
-        const payload = this.jwtService.verify(token, { secret: config.JWT_SECRET_KEY }) as ITokenPayload;
-        return payload.user;
-      }
-      catch(err) {
-          return false;
-      }
+  async unPackageRefreshOrAccessToken(
+    token: string,
+  ) {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: config.JWT_SECRET_KEY,
+      }) as ITokenPayload;
+      return payload;
+    } catch (err) {
+      return false;
+    }
   }
 }

@@ -22,7 +22,7 @@ import { OrderModule } from './order/order.module';
     LikeModule,
     JudgeModule,
     OrderCartModule,
-    OrderModule
+    OrderModule,
   ],
   controllers: [],
   providers: [],

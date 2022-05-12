@@ -8,8 +8,9 @@ import OrderCart from '$database/entities/OrderCart'
 import User from '$database/entities/User';
 import UserShop from '$database/entities/UserShop';
 import ProductRecent from '$database/entities/ProductRecent';
+import Judge from '$database/entities/Judge';
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, OrderCart, User, UserShop, ProductRecent]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Product, OrderCart, User, UserShop, ProductRecent, Judge]), AuthModule],
   controllers: [ProductController],
   providers: [ProductService],
 })

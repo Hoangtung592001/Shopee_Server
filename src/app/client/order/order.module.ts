@@ -7,8 +7,11 @@ import OrderDetail from '$database/entities/OrderDetail';
 import Order from '$database/entities/Order';
 import Product from '$database/entities/Product';
 import Voucher from '$database/entities/Voucher';
+import OrderCart from '$database/entities/OrderCart';
+import UserShop from '$database/entities/UserShop';
+import User from '$database/entities/User';
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderDetail, Product, Voucher]), AuthModule],
+  imports: [TypeOrmModule.forFeature([Order, OrderDetail, Product, Voucher, OrderCart, UserShop, User]), AuthModule],
   controllers: [OrderController],
   providers: [OrderService],
 })

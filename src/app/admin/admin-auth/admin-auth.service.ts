@@ -150,7 +150,7 @@ export class AdminAuthService {
     if (!userInfo)
       throw new Exception(ErrorCode.Token_Not_Exist, 'Your Token is invalid!');
 
-    const accessToken = this.authService.generateAccessToken(userInfo);
+    const accessToken = this.authService.generateAccessToken(userInfo as any);
     return accessToken;
   }
 

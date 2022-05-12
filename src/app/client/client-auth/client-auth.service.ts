@@ -6,13 +6,9 @@ import {
   IUserLogin,
   IInputChangePassword,
   IRefreshTokenPakage,
-  IPrePayload
+  IPrePayload,
 } from '$types/interfaces';
-import {
-  Connection,
-  Repository,
-  createQueryBuilder,
-} from 'typeorm';
+import { Connection, Repository, createQueryBuilder } from 'typeorm';
 import User from '$database/entities/User';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from '$shared/auth/auth.service';
@@ -79,7 +75,7 @@ export class ClientAuthService {
     const payload = {
       id: id,
       role: hasEmail.role.roleName,
-    }
+    };
     const accessToken = this.authService.generateAccessToken(payload);
 
     if (refreshTokenExpired) {
@@ -119,7 +115,7 @@ export class ClientAuthService {
     user: IPrePayload,
   ): Promise<IPrePayload> {
     const userInDb = await this.userRepository.findOne({
-      where: {id: user.id}
+      where: { id: user.id },
     });
 
     const isMatchedPassword = await compare(
@@ -141,15 +137,16 @@ export class ClientAuthService {
     return user;
   }
 
-  async refreshAccessToken(params: IRefreshTokenPakage): Promise<string> {
-    const userInfo = await this.authService.verifyRefreshToken(
+  async refreshAccessToken(params: IRefreshTokenPakage) {
+    const userInfo = (await this.authService.verifyRefreshToken(
       params.refreshToken,
       this.userRepository,
-    );
+    )) as any;
+    console.log(userInfo);
     if (!userInfo)
       throw new Exception(ErrorCode.Token_Not_Exist, 'Your Token is invalid!');
-
-    const accessToken = this.authService.generateAccessToken(userInfo);
+    const { iat, exp, ...payload } = userInfo;
+    const accessToken = this.authService.generateAccessToken(payload as any);
     return accessToken;
   }
 }

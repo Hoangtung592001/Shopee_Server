@@ -10,11 +10,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ProductService } from './product.service';
-import {
-  IUserReq,
-  IProduct,
-  IInfoProduct,
-} from '$types/interfaces';
+import { IUserReq, IProduct, IInfoProduct } from '$types/interfaces';
 import { Public } from '$core/decorators/public.decorator';
 import { Request } from 'express';
 import { Roles } from '$core/decorators/roles.decorator';
@@ -22,7 +18,10 @@ import { Role } from '$types/enums';
 import { UserData } from '$core/decorators/user.decorator';
 import { OrderProductDto } from './dto/OrderProduct.dto';
 import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
-import { FindAllMemberModelDto, loadMoreFindAllMemberModelDto } from './dto/GetAllProductsDto';
+import {
+  FindAllMemberModelDto,
+  loadMoreFindAllMemberModelDto,
+} from './dto/GetAllProductsDto';
 import { assignLoadMore, assignPaging } from '$helpers/utils';
 
 interface IIdParam {
@@ -33,20 +32,23 @@ interface IIdParam {
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+  // @Public()
+  // @Get('get-all-products')
+  // async getAllProducts(@Req() req: Request, @Query() query: FindAllMemberModelDto) {
+  //   assignPaging(query);
+  //   return this.productService.getAllProducts(query);
+  // }
+
   @Public()
   @Get('get-all-products')
-  async getAllProducts(@Req() req: Request, @Query() query: FindAllMemberModelDto) {
-    assignPaging(query);
+  async getAllProducts(
+    @Req() req: Request,
+    @Query() query: loadMoreFindAllMemberModelDto,
+  ) {
+    assignLoadMore(query);
     return this.productService.getAllProducts(query);
   }
 
-  // @Public()
-  // @Get('get-all-products')
-  // async getAllProducts(@Req() req: Request, @Query() query: loadMoreFindAllMemberModelDto) {
-  //   assignLoadMore(query);
-  //   return this.productService.getAllProducts(query);
-  // }
-  
   @Post('add-products')
   async addProduct(@Req() req: IUserReq) {
     const body = req.body as IProduct;
@@ -56,8 +58,8 @@ export class ProductController {
 
   @Public()
   @Get('get-product/:id')
-  async getProduct(@Param() params) {
-    return await this.productService.getProduct(params.id);
+  async getProduct(@Param('id') id: number) {
+    return await this.productService.getProduct(id);
   }
 
   @Roles(Role.Admin)
@@ -94,7 +96,10 @@ export class ProductController {
   }
 
   @Get('get-recent-visited')
-  getRecentVisitedProduct(@UserData() member: Express.User, @Query() query: loadMoreFindAllMemberModelDto) {
+  getRecentVisitedProduct(
+    @UserData() member: Express.User,
+    @Query() query: loadMoreFindAllMemberModelDto,
+  ) {
     assignLoadMore(query);
     return this.productService.getRecentVisitedProduct(member.id, query);
   }

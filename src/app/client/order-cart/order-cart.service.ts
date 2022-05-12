@@ -1,27 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import {
-  IInfoProduct,
-  IPrePayload,
-  IProduct,
-  IProductFull,
-  IProductLineList,
-  IProductList,
-  IRawProduct,
-} from '$types/interfaces';
 import { Connection, Repository } from 'typeorm';
 import Product from '$database/entities/Product';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthService } from '$shared/auth/auth.service';
-import { compare, hash } from 'bcrypt';
-import { Exception, Unauthorized } from '$helpers/exception';
-import { ErrorCode, ProductStatus } from '$types/enums';
-import config from '$config';
-import { JwtService } from '@nestjs/jwt';
-import { SearchIndex } from '$types/enums';
-import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { Exception } from '$helpers/exception';
+import { CommonStatus, ErrorCode, ProductStatus } from '$types/enums';
 import OrderCart from '$database/entities/OrderCart';
-import { OrderProductDto } from './dto/OrderProduct.dto';
 import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
+import { GetOrderCartDto } from './dto/GetOrderCartDto.dto';
+import { filterOrderCart } from '$helpers/utils';
+import UserShop from '$database/entities/UserShop';
+import User from '$database/entities/User';
 
 @Injectable()
 export class OrderCartService {
@@ -66,7 +55,13 @@ export class OrderCartService {
       ...product,
     };
 
-    const productInCart = await this.orderCartRepository.findOne({ where: { customerId: memberId, productCode: product.productCode } });
+    const productInCart = await this.orderCartRepository.findOne({
+      where: {
+        customerId: memberId,
+        productCode: product.productCode,
+        status: CommonStatus.Active,
+      },
+    });
     if (!!productInCart) {
       productInCart.quantityOrder += product.quantityOrder;
       return this.orderCartRepository.save(productInCart);
@@ -78,7 +73,7 @@ export class OrderCartService {
   async deleteProductFromCart(memberId: number, orderId: number) {
     const orderInCart = await this.orderCartRepository
       .createQueryBuilder('oc')
-      .andWhere('oc.customer_id = :memberId AND order_id = :orderId', {
+      .andWhere('oc.customer_id = :memberId AND oc.id = :orderId', {
         memberId: memberId,
         orderId: orderId,
       })
@@ -92,18 +87,39 @@ export class OrderCartService {
 
     return await this.orderCartRepository.save({
       ...orderInCart,
-      status: 0,
+      status: CommonStatus.Inactive,
     });
   }
 
-  async getAllOrderInCart(memberId: number) {
-    return this.orderCartRepository
-      .createQueryBuilder('oc')
-      .innerJoinAndSelect('oc.product', 'product')
-      .where('oc.customer_id = :memberId AND oc.status = 1', {
-        memberId: memberId,
-      })
-      .getMany();
+  async getAllOrderInCart(memberId: number, params: GetOrderCartDto) {
+    const queryBuilder = this.orderCartRepository.createQueryBuilder('oc')
+    .select('oc.quantity_order', 'quantity')
+    .addSelect('oc.id', 'orderCartId')
+    .addSelect('oc.product_code', 'productCode')
+    .addSelect('us.shop_name', 'shopName')
+    .addSelect('us.id', 'shopId')
+    .addSelect('u.image', 'shopImage')
+    .addSelect('p.image', 'productImage')
+    .addSelect('p.status', 'productStatus')
+    .addSelect('p.product_name', 'productName')
+    .addSelect('p.price_each', 'priceEach')
+    .addSelect('p.status', 'productStatus')
+    .innerJoin(Product, 'p', 'oc.product_code = p.id')
+    .innerJoin(UserShop, 'us', 'us.id = p.seller_id')
+    .innerJoin(User, 'u', 'u.id = us.owner_id')
+    .where('oc.status = :status', { status: CommonStatus.Active })
+    if (params.takeAfter) {
+      queryBuilder.andWhere('oc.id < :takeAfter', {
+        takeAfter: params.takeAfter,
+      });
+    }
+
+    const results = await queryBuilder
+      .orderBy('oc.id', 'DESC')
+      .take(params.pageSize)
+      .getRawMany();
+
+    return filterOrderCart(results);
   }
 
   async changeQuantityOrderOfProductInCart(
@@ -111,17 +127,31 @@ export class OrderCartService {
     productCode: number,
     quantity: number,
   ) {
+    const productInDb = await this.productRepository.findOne(productCode);
+
+    if (quantity > productInDb.quantityInStock) {
+      throw new Exception(ErrorCode.Quantity_Invalid, 'Your quantity is higher than shop has!');
+    }
+
     const productInCartInDb = await this.orderCartRepository
       .createQueryBuilder('oc')
       .innerJoinAndSelect('oc.product', 'product')
       .where(
-        'oc.customer_id = :memberId AND status = 1 AND oc.productCode: productCode',
+        'oc.customer_id = :memberId AND status = :status AND oc.productCode: productCode',
         {
           memberId: memberId,
           productCode: productCode,
+          status: ProductStatus.Active,
         },
       )
       .getOne();
+
+    if (!!!productInCartInDb) {
+      throw new Exception(
+        ErrorCode.Product_Not_Found,
+        'Product is not found or sold off!',
+      );
+    }
     if (productInCartInDb.product.quantityInStock < quantity) {
       throw new Exception(
         ErrorCode.Quantity_Invalid,

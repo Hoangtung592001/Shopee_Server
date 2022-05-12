@@ -1,3 +1,4 @@
+import { CommonStatus } from '$types/enums';
 import {
   Column,
   CreateDateColumn,
@@ -10,7 +11,7 @@ import Product from './Product';
 
 @Entity({ name: 'orders_cart' })
 export default class OrderCart {
-  @PrimaryGeneratedColumn({ name: 'order_id', type: 'bigint', unsigned: true })
+  @PrimaryGeneratedColumn({ name: 'id', type: 'bigint', unsigned: true })
   orderId: number;
 
   @Column({
@@ -41,7 +42,7 @@ export default class OrderCart {
     name: 'status',
     type: 'tinyint',
     unsigned: true,
-    default: 1,
+    default: CommonStatus.Active,
     comment: '1: active 0: deleted',
   })
   status: number;

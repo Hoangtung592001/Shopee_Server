@@ -62,6 +62,7 @@ export enum ProductStatus {
   SoldOff = 2
 }
 
-export enum TransferringMethod {
-  
+export enum TransferringMethodStatus {
+  Fast = 1,
+  Normal = 2
 }

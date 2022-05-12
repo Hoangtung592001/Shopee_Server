@@ -33,6 +33,9 @@ export default class User {
   @Column({ name: 'username', type: 'varchar', length: 255, nullable: false })
   username: string;
 
+  @Column({ name: 'image', type: 'varchar', length: 10000, nullable: false })
+  image: string;
+
   @Column({
     name: 'status',
     type: 'tinyint',

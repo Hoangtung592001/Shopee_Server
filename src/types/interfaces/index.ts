@@ -62,6 +62,7 @@ export interface IProduct {
   soldQuantity: number;
   sellerEmail: string;
   shopTypeId: number;
+  description: string;
 }
 
 export interface IProductFull {
@@ -127,6 +128,33 @@ export interface PostSearchResult {
       _source: PostSearchBody;
     }>;
   };
+}
+
+export interface IReturnOrders {
+  orderId: number;
+  status: number;
+  productImage: string;
+  productStatus: number;
+  shopImage: string;
+  priceEach: number;
+  quantity: number;
+  productName: string;
+  shopName: string;
+  shopId: number;
+  productCode: number;
+}
+
+export interface IReturnOrderCart {
+  productImage: string;
+  productStatus: number;
+  shopId: number;
+  shopImage: string;
+  quantity: number;
+  orderCartId: number;
+  productCode: string;
+  shopName: string;
+  productName: string;
+  priceEach: number;
 }
 
 

@@ -7,10 +7,20 @@ import OrderDetail from '$database/entities/OrderDetail';
 import { OrderProductDto } from './dto/OrderProductDto.dto';
 import Product from '$database/entities/Product';
 import { Exception } from '$helpers/exception';
-import { CommonStatus, ErrorCode, ProductStatus } from '$types/enums';
-import { binarySearchForValidateOrders } from '$helpers/utils';
+import {
+  CommonStatus,
+  ErrorCode,
+  OrderStatus,
+  ProductStatus,
+} from '$types/enums';
+import { binarySearchForValidateOrders, returnLoadMore } from '$helpers/utils';
 import Voucher from '$database/entities/Voucher';
-
+import TransferringMethod from '$database/entities/TransferringMethod';
+import OrderCart from '$database/entities/OrderCart';
+import UserShop from '$database/entities/UserShop';
+import { LoadMoreOrderDto } from './dto/LoadMoreOrderDto.dto';
+import User from '$database/entities/User';
+import { filterOrders } from '$helpers/utils';
 @Injectable()
 export class OrderService {
   constructor(
@@ -24,11 +34,41 @@ export class OrderService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-  async getOrders(memberId: number) {
-    return this.orderRepository
+  async getOrders(memberId: number, params: LoadMoreOrderDto) {
+    const queryBuilder = this.orderRepository
       .createQueryBuilder('o')
-      .innerJoin('o.orderdetails', 'orderdatails')
-      .getMany();
+      .select('o.id', 'orderId')
+      .addSelect('o.status', 'status')
+      .addSelect('od.price_each', 'priceEach')
+      .addSelect('od.quantity_order', 'quantity')
+      .addSelect('p.product_name', 'productName')
+      .addSelect('p.id', 'productCode')
+      .addSelect('p.image', 'productImage')
+      .addSelect('p.status', 'productStatus')
+      .addSelect('us.shop_name', 'shopName')
+      .addSelect('us.id', 'shopId')
+      .addSelect('u.image', 'shopImage')
+      .innerJoin(OrderDetail, 'od', 'o.id = od.order_id')
+      .innerJoin(Product, 'p', 'od.product_code = p.id')
+      .innerJoin(UserShop, 'us', 'us.id = p.seller_id')
+      .innerJoin(User, 'u', 'u.id = us.owner_id')
+      .andWhere('o.status != :status AND o.customer_id = :memberId', {
+        status: OrderStatus.Deleted,
+        memberId: memberId,
+      });
+    if (params.takeAfter) {
+      queryBuilder.andWhere('o.id < :takeAfter', {
+        takeAfter: params.takeAfter,
+      });
+    }
+
+    const results = await queryBuilder
+      .orderBy('o.id', 'DESC')
+      .take(params.pageSize)
+      .getRawMany();
+      
+    return filterOrders(results);
+    // return returnLoadMore(results, params);
   }
 
   async orderProduct(memberId: number, body: OrderProductDto) {
@@ -40,6 +80,8 @@ export class OrderService {
       const orderdetailRepository = transaction.getRepository(OrderDetail);
 
       const voucherRepository = transaction.getRepository(Voucher);
+
+      const orderCartRepository = transaction.getRepository(OrderCart);
 
       const allShopIds = Object.keys(body.data);
 
@@ -63,7 +105,7 @@ export class OrderService {
 
       // Check owner and quantity
       allShopIds.forEach((shopId) => {
-        body.data[shopId].forEach((product) => {
+        body.data[shopId].forEach((product, index) => {
           const indexOfProductInDb = binarySearchForValidateOrders(
             allProductInDb,
             product.productCode,
@@ -86,36 +128,76 @@ export class OrderService {
               'One of the products you ordered have that owner is invalid or quantity you ordered is higher than shop have! Try again!',
             );
           }
+          body.data[shopId][index].priceEach = productInDb.priceEach;
         });
       });
 
       // Check Voucher
       if (!!body.voucherId) {
-        const voucherInDb = await voucherRepository.findOne({ where: { id: body.voucherId, memberId: memberId, status: CommonStatus.Active }});
+        const voucherInDb = await voucherRepository.findOne({
+          where: {
+            id: body.voucherId,
+            memberId: memberId,
+            status: CommonStatus.Active,
+          },
+        });
         if (!!!voucherInDb) {
-          throw new Exception(ErrorCode.Not_Found, 'Your voucher expired or is used!');
+          throw new Exception(
+            ErrorCode.Not_Found,
+            'Your voucher expired or is used!',
+          );
         }
 
         await voucherRepository.save({
           ...voucherInDb,
           status: CommonStatus.Inactive,
-          usedAt: Date.now()
-        })
+          usedAt: Date.now(),
+        });
       }
+
+      // Delete from order cart.
+      await orderCartRepository
+        .createQueryBuilder('oc')
+        .update()
+        .set({ status: CommonStatus.Inactive })
+        .andWhere(
+          'product_code IN (:...allProductCodes) AND customer_id = :memberId AND status =:status',
+          {
+            allProductCodes: allProductCodes,
+            memberId: memberId,
+            status: CommonStatus.Active,
+          },
+        )
+        .execute();
 
       // Save orders and orderdetails and voucher
 
-      allShopIds.forEach(async (shopId) => {
-        const order = body.data[shopId];
+      await Promise.all(
+        allShopIds.map(async (shopId) => {
+          const order = body.data[shopId];
+          const savingOrder = await orderRepository.save({
+            address: body.address,
+            customerId: memberId,
+            voucherId: body.voucherId ? body.voucherId : null,
+            TransferringMethodId: +body.transferringMethodId
+              ? +body.transferringMethodId
+              : null,
+            shippingFee: body.voucherId ? 0 : 18000,
+          });
 
-        const savingOrder = await orderRepository.save({
-          
-        })
-        body.data[shopId].forEach((product) => {
-
-        });
-      });
-
+          order.forEach(async (product) => {
+            await orderdetailRepository.save({
+              orderId: savingOrder.id,
+              productCode: product.productCode,
+              quantityOrder: product.quantity,
+              priceEach: product.priceEach,
+            });
+          });
+        }),
+      );
+      return {
+        success: true,
+      };
     });
   }
 }

@@ -8,4 +8,7 @@ export default class ProductLine {
     productLine: string;
     @Column({ name: "text_description", type: "varchar", length: 1000, nullable: false})
     textDescription: string;
+    @Column({ name: "image", type: "varchar", length: 10000, nullable: false})
+    image: string;
+
 }

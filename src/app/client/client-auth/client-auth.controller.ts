@@ -49,7 +49,6 @@ export class ClientAuthController {
     const body = req.body as IInputChangePassword;
     const user = req.user as any as IPayload;
     const { tokenType, ...payload } = user;
-    console.log(payload);
     return await this.clientAuthService.changePassword(body, payload);
   }
 

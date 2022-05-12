@@ -8,7 +8,9 @@ import '$helpers/logger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    cors: true
   });
+
   await app.listen(config.SERVER_PORT);
   getLogger().info(`Server is running on port ${config.SERVER_PORT}`);
 }

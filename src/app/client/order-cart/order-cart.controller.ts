@@ -8,6 +8,7 @@ import {
   Delete,
   Req,
   Put,
+  Query,
 } from '@nestjs/common';
 import { OrderCartService } from './order-cart.service';
 import { IUserReq, IProduct, IInfoProduct } from '$types/interfaces';
@@ -19,6 +20,8 @@ import { UserData } from '$core/decorators/user.decorator';
 import { OrderProductDto } from './dto/OrderProduct.dto';
 import { AddProductsToCartDto } from './dto/AddProductToCart.dto';
 import { ChangeQuantityOrder } from './dto/ChangeQuantityOrder';
+import { GetOrderCartDto } from './dto/GetOrderCartDto.dto';
+import { assignLoadMore } from '$helpers/utils';
 
 @Controller('order-cart')
 export class OrderCartController {
@@ -41,8 +44,9 @@ export class OrderCartController {
   }
 
   @Get('get-all-products-in-cart')
-  getAllInCart(@UserData() member: Express.User) {
-    return this.orderCartService.getAllOrderInCart(member.id);
+  getAllInCart(@UserData() member: Express.User, @Query() query: GetOrderCartDto) {
+    assignLoadMore(query);
+    return this.orderCartService.getAllOrderInCart(member.id, query);
   }
 
   @Put('change-quantity-products')

@@ -18,11 +18,10 @@ export default class OrderDetail {
 
   @Column({
     name: 'product_code',
-    type: 'varchar',
-    length: 255,
-    nullable: false,
+    type: 'bigint',
+    unsigned: true
   })
-  productCode: string;
+  productCode: number;
 
   @Column({
     name: 'quantity_order',

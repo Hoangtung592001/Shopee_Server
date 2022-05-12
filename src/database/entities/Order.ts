@@ -1,4 +1,4 @@
-import { OrderStatus } from '$types/enums';
+import { OrderStatus, TransferringMethodStatus } from '$types/enums';
 import { number } from 'joi';
 import {
   Column,
@@ -63,6 +63,7 @@ export default class Order {
     name: 'transferring_method_id',
     type: 'bigint',
     unsigned: true,
+    default: TransferringMethodStatus.Fast
   })
   transferringMethodId: number;
 

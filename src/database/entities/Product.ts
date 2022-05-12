@@ -44,8 +44,11 @@ export default class Product {
   })
   priceEach: number;
 
-  @Column({ name: 'image', type: 'varchar', length: 10000, nullable: false })
+  @Column({ name: 'image', type: 'varchar', length: 5000, nullable: false })
   image: string;
+
+  @Column({ name: 'description', type: 'varchar', length: 5000, nullable: false })
+  description: string;
 
   @Column({ name: 'origin', type: 'varchar', length: 255, nullable: false })
   origin: string;
