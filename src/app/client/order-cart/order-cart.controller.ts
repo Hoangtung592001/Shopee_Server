@@ -44,7 +44,10 @@ export class OrderCartController {
   }
 
   @Get('get-all-products-in-cart')
-  getAllInCart(@UserData() member: Express.User, @Query() query: GetOrderCartDto) {
+  getAllInCart(
+    @UserData() member: Express.User,
+    @Query() query: GetOrderCartDto,
+  ) {
     assignLoadMore(query);
     return this.orderCartService.getAllOrderInCart(member.id, query);
   }

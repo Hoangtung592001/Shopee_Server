@@ -101,14 +101,12 @@ export interface IInfoProduct {
   discount?: number;
   soldQuantity?: number;
   shopTypeId?: number;
-
 }
 
 export interface IProductList extends Array<IProduct> {}
 
 export interface IProductLine {
   productLine: string;
-  textDescription: string;
 }
 
 export interface IProductLineList extends Array<IProductLine> {}
@@ -156,5 +154,3 @@ export interface IReturnOrderCart {
   productName: string;
   priceEach: number;
 }
-
-

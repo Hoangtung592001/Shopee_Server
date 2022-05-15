@@ -18,21 +18,27 @@ export default class Like {
   @Column({ name: 'value', type: 'double', unsigned: true })
   value: number;
 
-  @Column({ name: 'status', type: 'tinyint', unsigned: true, comment: '0: Inactive 1: Active', default: CommonStatus.Active })
+  @Column({
+    name: 'status',
+    type: 'tinyint',
+    unsigned: true,
+    comment: '0: Inactive 1: Active',
+    default: CommonStatus.Active,
+  })
   status: number;
 
-  @Column({ name: 'used_at', type: 'datetime'})
+  @CreateDateColumn({ name: 'used_at', type: 'datetime' })
   usedAt: string | Date;
 
-  @Column({ name: 'started_at', type: 'datetime'})
+  @CreateDateColumn({ name: 'started_at', type: 'datetime' })
   startedAt: string | Date;
 
-  @Column({ name: 'expired_at', type: 'datetime'})
+  @CreateDateColumn({ name: 'expired_at', type: 'datetime' })
   expiredAt: string | Date;
 
-  @CreateDateColumn({ name: 'created_at', type: 'datetime'})
+  @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt: string | Date;
 
-  @OneToMany(() => Order, order => order.voucher)
+  @OneToMany(() => Order, (order) => order.voucher)
   order: Order[];
 }

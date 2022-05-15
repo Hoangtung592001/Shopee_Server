@@ -9,7 +9,6 @@ import { PostJudgeDto } from './dto/post-judge.dto';
 import { Exception } from '$helpers/exception';
 import { ErrorCode, ProductStatus } from '$types/enums';
 import { GetJudgeDto } from './dto/get-judge.dto';
-import { returnLoadMore } from '$helpers/utils';
 
 @Injectable()
 export class JudgeService {
@@ -32,7 +31,7 @@ export class JudgeService {
       memberId: memberId,
       productCode: judge.productCode,
       content: judge.content,
-      stars: judge.stars
+      stars: judge.stars,
     });
   }
 
@@ -74,11 +73,8 @@ export class JudgeService {
       });
     }
 
-    const results = await queryBuilder
-      .orderBy('j.id', 'DESC')
-      .take(params.pageSize)
-      .getMany();
+    const results = await queryBuilder.orderBy('j.id', 'DESC').getMany();
 
-    return returnLoadMore(results, params);
+    return results;
   }
 }

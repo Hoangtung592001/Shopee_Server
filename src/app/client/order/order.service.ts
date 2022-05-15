@@ -13,7 +13,7 @@ import {
   OrderStatus,
   ProductStatus,
 } from '$types/enums';
-import { binarySearchForValidateOrders, returnLoadMore } from '$helpers/utils';
+import { binarySearchForValidateOrders } from '$helpers/utils';
 import Voucher from '$database/entities/Voucher';
 import TransferringMethod from '$database/entities/TransferringMethod';
 import OrderCart from '$database/entities/OrderCart';
@@ -66,9 +66,8 @@ export class OrderService {
       .orderBy('o.id', 'DESC')
       .take(params.pageSize)
       .getRawMany();
-      
+
     return filterOrders(results);
-    // return returnLoadMore(results, params);
   }
 
   async orderProduct(memberId: number, body: OrderProductDto) {
@@ -105,7 +104,7 @@ export class OrderService {
 
       // Check owner and quantity
       allShopIds.forEach((shopId) => {
-        body.data[shopId].forEach((product, index) => {
+        body.data[shopId].forEach(async (product, index) => {
           const indexOfProductInDb = binarySearchForValidateOrders(
             allProductInDb,
             product.productCode,
@@ -127,6 +126,19 @@ export class OrderService {
               ErrorCode.Quantity_Invalid,
               'One of the products you ordered have that owner is invalid or quantity you ordered is higher than shop have! Try again!',
             );
+          } else {
+            console.log(1111);
+            await productRepository
+              .createQueryBuilder('p')
+              .update()
+              .set({
+                quantityInStock: productInDb.quantityInStock - product.quantity,
+                soldQuantity: productInDb.soldQuantity + product.quantity,
+              })
+              .where('id = :productCode', {
+                productCode: product.productCode,
+              })
+              .execute();
           }
           body.data[shopId][index].priceEach = productInDb.priceEach;
         });

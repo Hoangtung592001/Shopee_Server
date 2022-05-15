@@ -16,11 +16,11 @@ import {
   FindAllMemberModelDto,
   loadMoreFindAllMemberModelDto,
 } from './dto/GetAllProductsDto';
-import { returnLoadMore, returnPaging } from '$helpers/utils';
 import UserShop from '$database/entities/UserShop';
 import User from '$database/entities/User';
 import ProductRecent from '$database/entities/ProductRecent';
 import Judge from '$database/entities/Judge';
+import Like from '$database/entities/Like';
 const camelcaseKeys = require('camelcase-keys');
 @Injectable()
 export class ProductService {
@@ -39,6 +39,8 @@ export class ProductService {
     private readonly productRecentRepository: Repository<ProductRecent>,
     @InjectRepository(Judge)
     private readonly judgeRepository: Repository<Judge>,
+    @InjectRepository(Like)
+    private readonly likeRepository: Repository<Like>,
   ) {}
 
   // async getAllProducts(params: FindAllMemberModelDto) {
@@ -65,56 +67,99 @@ export class ProductService {
       query = query + ' LIMIT ' + params.pageSize;
     }
     const results = await queryRunner.query(query);
-    return returnLoadMore(camelcaseKeys(results), params);
-
-    // const queryBuilder = this.productRepository
-    //   .createQueryBuilder('p')
-    //   .leftJoinAndSelect('p.judges', 'judges')
-    // if (params.takeAfter) {
-    //   queryBuilder.andWhere('p.id < :takeAfter', {
-    //     takeAfter: params.takeAfter,
-    //   });
-    // }
-    // const results = await queryBuilder
-    //   // .groupBy('p.id')
-    //   .orderBy('p.id', 'DESC')
-    //   .take(params.pageSize)
-    //   .getMany();
-    // return returnLoadMore(results, params);
+    return camelcaseKeys(results);
   }
 
   async addProduct(product: IProduct, user: IPrePayload) {
-    try {
-      const userHaveShop = await this.userShopRepository.findOne({
-        where: { ownerId: user.id },
-      });
-      if (!!!userHaveShop) {
-        throw new Exception(
-          ErrorCode.Not_Register_Shop,
-          "You don' have shop now! Please register first!",
-        );
-      }
-      const savingProduct = {
-        ...product,
-        sellerId: userHaveShop.id,
-      };
-      const savedProduct = await this.productRepository.save(savingProduct);
-      return savedProduct;
-    } catch (error) {
+    const userHaveShop = await this.userShopRepository.findOne({
+      where: { ownerId: user.id },
+    });
+    if (!!!userHaveShop) {
       throw new Exception(
-        ErrorCode.Unknown_Error,
-        error?.message || 'Unknown_Error',
+        ErrorCode.Not_Register_Shop,
+        "You don' have shop now! Please register first!",
       );
     }
+    const savingProduct = {
+      ...product,
+      sellerId: userHaveShop.id,
+    };
+    const savedProduct = await this.productRepository.save(savingProduct);
+    return savedProduct;
   }
 
   async getProduct(id: number) {
-    const queryRunner = getConnection().createQueryRunner();
-    await queryRunner.connect();
-    let query =
-      'SELECT p.*, j.content as content, j.member_id as commentatorId, u.username as username, j.stars as rating FROM product p LEFT JOIN judge j on p.id = j.product_code LEFT JOIN user u ON j.member_id = u.id WHERE p.id = 13;';
-    const results = await queryRunner.query(query, [id]);
-    return camelcaseKeys(results[0]);
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('p')
+      .innerJoinAndMapOne('p.shop', UserShop, 'us', 'p.sellerId = us.id')
+      .leftJoinAndMapMany('p.judges', Judge, 'j', 'j.productCode = p.id')
+      .innerJoinAndMapOne('j.user', User, 'u', 'u.id = j.memberId')
+      .select([
+        'p.id',
+        'p.productName',
+        'p.productLine',
+        'p.quantityInStock',
+        'p.priceEach',
+        'p.image',
+        'p.description',
+        'p.origin',
+        'p.discount',
+        'p.soldQuantity',
+        'us.id',
+        'us.shopName',
+        'j.id',
+        'j.content',
+        'j.stars',
+        'u.id',
+        'u.email',
+        'u.username',
+        'u.image',
+      ])
+      .where('p.id = :pId', { pId: id })
+      .orderBy('p.id', 'DESC')
+      .getOne();
+    return await queryBuilder;
+  }
+
+  async getProducByUser(userId: number, productId: number) {
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('p')
+      .innerJoinAndMapOne('p.shop', UserShop, 'us', 'p.sellerId = us.id')
+      .leftJoinAndMapMany('p.judges', Judge, 'j', 'j.productCode = p.id')
+      .innerJoinAndMapOne('j.user', User, 'u', 'u.id = j.memberId')
+      .leftJoinAndMapOne(
+        'p.like',
+        Like,
+        'l',
+        'l.productCode = p.id AND l.memberId = :lMemberId',
+        { lMemberId: userId },
+      )
+      .select([
+        'p.id',
+        'p.productName',
+        'p.productLine',
+        'p.quantityInStock',
+        'p.priceEach',
+        'p.image',
+        'p.description',
+        'p.origin',
+        'p.discount',
+        'p.soldQuantity',
+        'us.id',
+        'us.shopName',
+        'j.id',
+        'j.content',
+        'j.stars',
+        'u.id',
+        'u.email',
+        'u.username',
+        'u.image',
+        'l.id',
+      ])
+      .where('p.id = :pId', { pId: productId })
+      .orderBy('p.id', 'DESC')
+      .getOne();
+    return await queryBuilder;
   }
 
   async deleteProduct(id: number, user: IPrePayload) {
@@ -208,20 +253,14 @@ export class ProductService {
       productCode: productCode,
     });
   }
-  // async getAllProducts(params: loadMoreFindAllMemberModelDto) {
-  //   const queryBuilder = this.productRepository.createQueryBuilder('p');
-  //   if (params.takeAfter) {
-  //     queryBuilder.andWhere('p.id < :takeAfter', { takeAfter: params.takeAfter })
-  //   }
-  //   const results= await queryBuilder.orderBy('p.id', 'DESC').take(params.pageSize).getMany();
-  //   return returnLoadMore(results, params);
-  // }
 
   async getRecentVisitedProduct(
     memberId: number,
     params: loadMoreFindAllMemberModelDto,
   ) {
-    const queryBuilder = this.productRecentRepository.createQueryBuilder('pr');
+    const queryBuilder = this.productRecentRepository
+      .createQueryBuilder('pr')
+      .innerJoinAndMapOne('pr.product', Product, 'p', 'p.id = pr.productCode');
     if (params.takeAfter) {
       queryBuilder.andWhere(
         'pr.id < :takeAfter AND pr.visitor_id = :memberId',
@@ -232,10 +271,7 @@ export class ProductService {
       );
     }
 
-    const results = await queryBuilder
-      .orderBy('pr.id', 'DESC')
-      .take(params.pageSize)
-      .getMany();
-    return returnLoadMore(results, params);
+    const results = await queryBuilder.orderBy('pr.id', 'DESC').getMany();
+    return results;
   }
 }

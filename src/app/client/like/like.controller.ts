@@ -15,8 +15,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { LikeService } from './like.service';
-import {
-} from '$types/interfaces';
+import {} from '$types/interfaces';
 import { Public } from '$core/decorators/public.decorator';
 import { UserData } from '$core/decorators/user.decorator';
 import { LikeProductDto } from './dto/like-product.dto';
@@ -26,7 +25,10 @@ export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
   @Post('like-product/:productCode')
-  likeProduct(@UserData() member: Express.User, @Param('productCode') productCode: string) {
+  likeProduct(
+    @UserData() member: Express.User,
+    @Param('productCode') productCode: string,
+  ) {
     return this.likeService.likeProduct(+member.id, +productCode);
   }
 

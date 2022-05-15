@@ -73,11 +73,15 @@ export class OrderCartService {
   async deleteProductFromCart(memberId: number, orderId: number) {
     const orderInCart = await this.orderCartRepository
       .createQueryBuilder('oc')
-      .andWhere('oc.customer_id = :memberId AND oc.id = :orderId', {
+      .andWhere('oc.customerId = :memberId AND oc.id = :orderId', {
         memberId: memberId,
         orderId: orderId,
       })
       .getOne();
+
+    if (!orderInCart) {
+      throw new Exception(ErrorCode.Not_Found, 'This order not found!');
+    }
     if (orderInCart.customerId !== memberId) {
       throw new Exception(
         ErrorCode.Unauthorized,
@@ -92,22 +96,23 @@ export class OrderCartService {
   }
 
   async getAllOrderInCart(memberId: number, params: GetOrderCartDto) {
-    const queryBuilder = this.orderCartRepository.createQueryBuilder('oc')
-    .select('oc.quantity_order', 'quantity')
-    .addSelect('oc.id', 'orderCartId')
-    .addSelect('oc.product_code', 'productCode')
-    .addSelect('us.shop_name', 'shopName')
-    .addSelect('us.id', 'shopId')
-    .addSelect('u.image', 'shopImage')
-    .addSelect('p.image', 'productImage')
-    .addSelect('p.status', 'productStatus')
-    .addSelect('p.product_name', 'productName')
-    .addSelect('p.price_each', 'priceEach')
-    .addSelect('p.status', 'productStatus')
-    .innerJoin(Product, 'p', 'oc.product_code = p.id')
-    .innerJoin(UserShop, 'us', 'us.id = p.seller_id')
-    .innerJoin(User, 'u', 'u.id = us.owner_id')
-    .where('oc.status = :status', { status: CommonStatus.Active })
+    const queryBuilder = this.orderCartRepository
+      .createQueryBuilder('oc')
+      .select('oc.quantity_order', 'quantity')
+      .addSelect('oc.id', 'orderCartId')
+      .addSelect('oc.product_code', 'productCode')
+      .addSelect('us.shop_name', 'shopName')
+      .addSelect('us.id', 'shopId')
+      .addSelect('u.image', 'shopImage')
+      .addSelect('p.image', 'productImage')
+      .addSelect('p.status', 'productStatus')
+      .addSelect('p.product_name', 'productName')
+      .addSelect('p.price_each', 'priceEach')
+      .addSelect('p.status', 'productStatus')
+      .innerJoin(Product, 'p', 'oc.product_code = p.id')
+      .innerJoin(UserShop, 'us', 'us.id = p.seller_id')
+      .innerJoin(User, 'u', 'u.id = us.owner_id')
+      .where('oc.status = :status', { status: CommonStatus.Active });
     if (params.takeAfter) {
       queryBuilder.andWhere('oc.id < :takeAfter', {
         takeAfter: params.takeAfter,
@@ -130,14 +135,17 @@ export class OrderCartService {
     const productInDb = await this.productRepository.findOne(productCode);
 
     if (quantity > productInDb.quantityInStock) {
-      throw new Exception(ErrorCode.Quantity_Invalid, 'Your quantity is higher than shop has!');
+      throw new Exception(
+        ErrorCode.Quantity_Invalid,
+        'Your quantity is higher than shop has!',
+      );
     }
 
     const productInCartInDb = await this.orderCartRepository
       .createQueryBuilder('oc')
       .innerJoinAndSelect('oc.product', 'product')
       .where(
-        'oc.customer_id = :memberId AND status = :status AND oc.productCode: productCode',
+        'oc.customer_id = :memberId AND oc.status = :status AND oc.productCode = :productCode',
         {
           memberId: memberId,
           productCode: productCode,

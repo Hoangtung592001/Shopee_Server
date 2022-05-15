@@ -62,6 +62,14 @@ export class ProductController {
     return await this.productService.getProduct(id);
   }
 
+  @Get('get-product-by-user/:id')
+  async getProductByUser(
+    @UserData() member: Express.User,
+    @Param('id') id: number,
+  ) {
+    return await this.productService.getProducByUser(member.id, id);
+  }
+
   @Roles(Role.Admin)
   @Delete('force-delete-product/:id')
   async forceDeleteProduct(@Param() params, @Req() req: IUserReq) {
