@@ -1,0 +1,228 @@
+[2022-06-25T09:50:09.536] [ERROR] Exception - QueryFailedError: ER_NO_DEFAULT_FOR_FIELD: Field 'origin' doesn't have a default value
+    at QueryFailedError.TypeORMError [as constructor] (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/error/TypeORMError.ts:7:9)
+    at new QueryFailedError (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/error/QueryFailedError.ts:9:9)
+    at Query.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/driver/mysql/MysqlQueryRunner.ts:196:37)
+    at Query.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:526:10)
+    at Query._callback (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:488:16)
+    at Query.Sequence.end (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Sequence.js:83:24)
+    at Query.ErrorPacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Query.js:92:8)
+    at Protocol._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:291:23)
+    at Parser._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:433:10)
+    at Parser.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:43:10) {
+  query: 'INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?, DEFAULT, ?, DEFAULT, DEFAULT, ?, DEFAULT)',
+  parameters: [
+    'Quan Jeans Nu',
+    3,
+    1000,
+    '200000',
+    'http://res.cloudinary.com/hoangtung2001/image/upload/v1656125387/multivendor-shop/j7gihib3km0bjf7eoxnt.jpg',
+    'Quan Jean Nu',
+    0,
+    6
+  ],
+  driverError: Error: ER_NO_DEFAULT_FOR_FIELD: Field 'origin' doesn't have a default value
+      at Query.Sequence._packetToError (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Sequence.js:47:14)
+      at Query.ErrorPacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Query.js:79:18)
+      at Protocol._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:291:23)
+      at Parser._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:433:10)
+      at Parser.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:43:10)
+      at Protocol.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:38:16)
+      at Socket.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:88:28)
+      at Socket.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:526:10)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      --------------------
+      at Protocol._enqueue (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:144:48)
+      at PoolConnection.query (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:198:25)
+      at MysqlQueryRunner.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/driver/mysql/MysqlQueryRunner.ts:185:36)
+      at step (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:143:27)
+      at Object.next (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:124:57)
+      at fulfilled (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:114:62)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+    code: 'ER_NO_DEFAULT_FOR_FIELD',
+    errno: 1364,
+    sqlMessage: "Field 'origin' doesn't have a default value",
+    sqlState: 'HY000',
+    index: 0,
+    sql: "INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, 'Quan Jeans Nu', 3, 1000, '200000', 'http://res.cloudinary.com/hoangtung2001/image/upload/v1656125387/multivendor-shop/j7gihib3km0bjf7eoxnt.jpg', 'Quan Jean Nu', DEFAULT, 0, DEFAULT, DEFAULT, 6, DEFAULT)"
+  },
+  code: 'ER_NO_DEFAULT_FOR_FIELD',
+  errno: 1364,
+  sqlMessage: "Field 'origin' doesn't have a default value",
+  sqlState: 'HY000',
+  index: 0,
+  sql: "INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, 'Quan Jeans Nu', 3, 1000, '200000', 'http://res.cloudinary.com/hoangtung2001/image/upload/v1656125387/multivendor-shop/j7gihib3km0bjf7eoxnt.jpg', 'Quan Jean Nu', DEFAULT, 0, DEFAULT, DEFAULT, 6, DEFAULT)",
+  request: {
+    method: 'POST',
+    url: '/product/add-products',
+    body: {
+      productName: 'Quan Jeans Nu',
+      image: 'http://res.cloudinary.com/hoangtung2001/image/upload/v1656125387/multivendor-shop/j7gihib3km0bjf7eoxnt.jpg',
+      priceEach: '200000',
+      otherPhotos: [Array],
+      description: 'Quan Jean Nu',
+      discount: 0,
+      quantityInStock: 1000,
+      productLine: 3
+    },
+    ip: '::1'
+  }
+}
+[2022-06-25T09:52:40.096] [ERROR] Exception - Exception: Exception
+    at ClientAuthService.signIn (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/client-auth/client-auth.service.ts:58:13)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  response: {
+    errorCode: 'Not_Found',
+    statusCode: 400,
+    devMessage: "Email didn't exist. Please sign in first!"
+  },
+  status: 400,
+  request: {
+    method: 'POST',
+    url: '/client-auth/signin',
+    body: { email: 'nhtung5907@gmail.com', password: '123456789' },
+    ip: '::1'
+  }
+}
+[2022-06-25T15:23:31.029] [ERROR] Exception - Unauthorized: Unauthorized
+    at JwtAuthGuard.handleRequest (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/shared/auth/jwt-auth.guard.ts:30:13)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:49:128
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:91:24
+    at allFailed (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:110:18)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:183:28)
+    at JwtStrategy.strategy.fail (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:305:9)
+    at JwtStrategy.authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport-jwt/lib/strategy.js:96:21)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:369:16)
+    at authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:370:7)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:96:3 {
+  response: {
+    errorCode: 'Unauthorized',
+    statusCode: 401,
+    devMessage: 'You have provided an invalid access token'
+  },
+  status: 401,
+  request: {
+    method: 'GET',
+    url: '/notifications/get-notifications',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-25T15:23:34.901] [ERROR] Exception - Unauthorized: Unauthorized
+    at JwtAuthGuard.handleRequest (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/shared/auth/jwt-auth.guard.ts:30:13)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:49:128
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:91:24
+    at allFailed (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:110:18)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:183:28)
+    at JwtStrategy.strategy.fail (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:305:9)
+    at JwtStrategy.authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport-jwt/lib/strategy.js:96:21)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:369:16)
+    at authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:370:7)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:96:3 {
+  response: {
+    errorCode: 'Unauthorized',
+    statusCode: 401,
+    devMessage: 'You have provided an invalid access token'
+  },
+  status: 401,
+  request: {
+    method: 'GET',
+    url: '/notifications/get-notifications',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-25T15:31:52.711] [ERROR] Exception - Unauthorized: Unauthorized
+    at JwtAuthGuard.handleRequest (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/shared/auth/jwt-auth.guard.ts:30:13)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:49:128
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:91:24
+    at allFailed (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:110:18)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:183:28)
+    at JwtStrategy.strategy.fail (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:305:9)
+    at JwtStrategy.authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport-jwt/lib/strategy.js:96:21)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:369:16)
+    at authenticate (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:370:7)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:96:3 {
+  response: {
+    errorCode: 'Unauthorized',
+    statusCode: 401,
+    devMessage: 'You have provided an invalid access token'
+  },
+  status: 401,
+  request: {
+    method: 'GET',
+    url: '/notifications/get-notifications',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-25T15:38:27.153] [ERROR] Exception - QueryFailedError: ER_NO_DEFAULT_FOR_FIELD: Field 'image' doesn't have a default value
+    at QueryFailedError.TypeORMError [as constructor] (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/error/TypeORMError.ts:7:9)
+    at new QueryFailedError (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/error/QueryFailedError.ts:9:9)
+    at Query.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/driver/mysql/MysqlQueryRunner.ts:196:37)
+    at Query.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:526:10)
+    at Query._callback (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:488:16)
+    at Query.Sequence.end (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Sequence.js:83:24)
+    at Query.ErrorPacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Query.js:92:8)
+    at Protocol._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:291:23)
+    at Parser._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:433:10)
+    at Parser.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:43:10) {
+  query: 'INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, ?, ?, ?, ?, DEFAULT, ?, ?, ?, DEFAULT, DEFAULT, ?, DEFAULT)',
+  parameters: [
+    'May Giat',
+    4,
+    1000,
+    '10000000',
+    'May Giat Sam Sung',
+    'Han Quoc',
+    0,
+    8
+  ],
+  driverError: Error: ER_NO_DEFAULT_FOR_FIELD: Field 'image' doesn't have a default value
+      at Query.Sequence._packetToError (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Sequence.js:47:14)
+      at Query.ErrorPacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/sequences/Query.js:79:18)
+      at Protocol._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:291:23)
+      at Parser._parsePacket (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:433:10)
+      at Parser.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Parser.js:43:10)
+      at Protocol.write (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:38:16)
+      at Socket.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:88:28)
+      at Socket.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:526:10)
+      at Socket.emit (node:events:527:28)
+      at addChunk (node:internal/streams/readable:324:12)
+      --------------------
+      at Protocol._enqueue (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/protocol/Protocol.js:144:48)
+      at PoolConnection.query (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/mysql/lib/Connection.js:198:25)
+      at MysqlQueryRunner.<anonymous> (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/driver/mysql/MysqlQueryRunner.ts:185:36)
+      at step (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:143:27)
+      at Object.next (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:124:57)
+      at fulfilled (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/tslib/tslib.js:114:62)
+      at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+    code: 'ER_NO_DEFAULT_FOR_FIELD',
+    errno: 1364,
+    sqlMessage: "Field 'image' doesn't have a default value",
+    sqlState: 'HY000',
+    index: 0,
+    sql: "INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, 'May Giat', 4, 1000, '10000000', DEFAULT, 'May Giat Sam Sung', 'Han Quoc', 0, DEFAULT, DEFAULT, 8, DEFAULT)"
+  },
+  code: 'ER_NO_DEFAULT_FOR_FIELD',
+  errno: 1364,
+  sqlMessage: "Field 'image' doesn't have a default value",
+  sqlState: 'HY000',
+  index: 0,
+  sql: "INSERT INTO `product`(`id`, `product_name`, `product_line`, `quantity_in_stock`, `price_each`, `image`, `description`, `origin`, `discount`, `status`, `sold_quantity`, `seller_id`, `shop_type_id`) VALUES (DEFAULT, 'May Giat', 4, 1000, '10000000', DEFAULT, 'May Giat Sam Sung', 'Han Quoc', 0, DEFAULT, DEFAULT, 8, DEFAULT)",
+  request: {
+    method: 'POST',
+    url: '/product/add-products',
+    body: {
+      productName: 'May Giat',
+      priceEach: '10000000',
+      otherPhotos: [Array],
+      description: 'May Giat Sam Sung',
+      discount: 0,
+      quantityInStock: 1000,
+      productLine: 4,
+      origin: 'Han Quoc'
+    },
+    ip: '::1'
+  }
+}

@@ -21,6 +21,7 @@ import UserShop from '$database/entities/UserShop';
 import { LoadMoreOrderDto } from './dto/LoadMoreOrderDto.dto';
 import User from '$database/entities/User';
 import { filterOrders } from '$helpers/utils';
+import { number } from 'joi';
 @Injectable()
 export class OrderService {
   constructor(
@@ -127,7 +128,6 @@ export class OrderService {
               'One of the products you ordered have that owner is invalid or quantity you ordered is higher than shop have! Try again!',
             );
           } else {
-            console.log(1111);
             await productRepository
               .createQueryBuilder('p')
               .update()
@@ -189,6 +189,8 @@ export class OrderService {
           const order = body.data[shopId];
           const savingOrder = await orderRepository.save({
             address: body.address,
+            receiverName: body.receiverName,
+            phone: body.phone,
             customerId: memberId,
             voucherId: body.voucherId ? body.voucherId : null,
             TransferringMethodId: +body.transferringMethodId
@@ -211,5 +213,136 @@ export class OrderService {
         success: true,
       };
     });
+  }
+
+  async orderInShop(memberId: number) {
+    return this.orderRepository
+      .createQueryBuilder('o')
+      .innerJoinAndMapMany(
+        'o.orderDetails',
+        OrderDetail,
+        'od',
+        'o.id = od.orderId',
+      )
+      .innerJoinAndMapOne(
+        'od.product',
+        Product,
+        'p',
+        'p.id = od.productCode AND p.status = :pStatus',
+        { pStatus: ProductStatus.Active },
+      )
+      .innerJoinAndMapOne(
+        'p.shop',
+        UserShop,
+        'us',
+        'us.id = p.sellerId AND us.status = :usStatus AND us.ownerId = :usOwnerId',
+        {
+          usStatus: CommonStatus.Active,
+          usOwnerId: memberId,
+        },
+      )
+      .select([
+        'o.id',
+        'o.orderedAt',
+        'o.deletedAt',
+        'o.deliveredAt',
+        'o.shippedAt',
+        'o.status',
+        'o.address',
+        'o.receiverName',
+        'o.phone',
+        'o.shippingFee',
+        'o.customerId',
+        'od.id',
+        'od.priceEach',
+        'od.quantityOrder',
+        'p.id',
+        'p.productName',
+        'p.quantityInStock',
+        'p.priceEach',
+        'p.image',
+        'p.origin',
+        'p.discount',
+        'p.soldQuantity',
+      ])
+      .getMany();
+  }
+  async updateStatusOrder(
+    memberId: number,
+    status: OrderStatus,
+    orderId: number,
+  ) {
+    const isOwner = await this.orderRepository
+      .createQueryBuilder('o')
+      .innerJoinAndMapMany(
+        'o.orderDetails',
+        OrderDetail,
+        'od',
+        'o.id = od.orderId',
+      )
+      .innerJoinAndMapOne(
+        'od.product',
+        Product,
+        'p',
+        'p.id = od.productCode AND p.status = :pStatus',
+        { pStatus: ProductStatus.Active },
+      )
+      .innerJoinAndMapOne(
+        'p.shop',
+        UserShop,
+        'us',
+        'us.id = p.sellerId AND us.status = :usStatus AND us.ownerId = :usOwnerId',
+        {
+          usStatus: CommonStatus.Active,
+          usOwnerId: memberId,
+        },
+      )
+      .where('o.id = :oOrderId', {
+        oOrderId: orderId,
+      })
+      .getMany();
+    if (isOwner.length == 0) {
+      throw new Exception(
+        ErrorCode.Permisstion_Denied,
+        'You are not owner of this orders',
+      );
+    }
+
+    return this.orderRepository.update({ id: orderId }, { status: status });
+  }
+
+  async updateStatusOrderByUser(
+    memberId: number,
+    status: OrderStatus,
+    orderId: number,
+  ) {
+    const isBuyer = await this.orderRepository
+      .createQueryBuilder('o')
+      .where('o.customerId = :memberId AND o.id = :orderId', {
+        memberId: memberId,
+        orderId: orderId,
+      })
+      .getOne();
+    if (!isBuyer) {
+      throw new Exception(
+        ErrorCode.Permisstion_Denied,
+        'You are not buyer of this order!',
+      );
+    }
+
+    if (
+      [
+        OrderStatus.Shipped,
+        OrderStatus.Delivering,
+        OrderStatus.Deleted,
+      ].includes(isBuyer.status) ||
+      status != OrderStatus.Deleted
+    ) {
+      throw new Exception(
+        ErrorCode.Permisstion_Denied,
+        'You cannot update status of this order!',
+      );
+    }
+    return this.orderRepository.update({ id: orderId }, { status: status });
   }
 }

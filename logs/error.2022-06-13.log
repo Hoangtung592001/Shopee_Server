@@ -1,0 +1,150 @@
+[2022-06-13T09:47:06.200] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:47:17.507] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:47:32.903] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:47:53.418] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:50:00.325] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:50:07.463] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:51:20.531] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:52:25.215] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:54:27.913] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:54:28.378] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T09:54:28.794] [ERROR] Exception - TypeError: Cannot set properties of undefined (setting 'orders')
+    at ProductService.getInfoOrder (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/product/product.service.ts:529:19)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  request: {
+    method: 'GET',
+    url: '/product/get-info-order',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T10:12:05.617] [ERROR] Exception - Unauthorized: Unauthorized
+    at JwtAuthGuard.handleRequest (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/shared/auth/jwt-auth.guard.ts:30:13)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:49:128
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/@nestjs/passport/dist/auth.guard.js:91:24
+    at allFailed (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:110:18)
+    at attempt (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:183:28)
+    at JwtStrategy.strategy.fail (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport/lib/middleware/authenticate.js:305:9)
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/passport-jwt/lib/strategy.js:106:33
+    at /Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/jsonwebtoken/verify.js:152:16
+    at getSecret (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/jsonwebtoken/verify.js:90:14)
+    at Object.module.exports [as verify] (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/node_modules/jsonwebtoken/verify.js:94:10) {
+  response: {
+    errorCode: 'Unauthorized',
+    statusCode: 401,
+    devMessage: 'You have provided an invalid access token'
+  },
+  status: 401,
+  request: {
+    method: 'GET',
+    url: '/member/get-personal-info',
+    body: {},
+    ip: '::1'
+  }
+}
+[2022-06-13T20:04:54.985] [ERROR] Exception - Exception: Exception
+    at OrderService.updateStatusOrderByUser (/Users/nguyenhoangtung/Desktop/Studying/NodeJS/Mobile Developing/E-Commerce/eCommerce_mobile/server/src/app/client/order/order.service.ts:341:13)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  response: {
+    errorCode: 'Permisstion_Denied',
+    statusCode: 400,
+    devMessage: 'You cannot update status of this order!'
+  },
+  status: 400,
+  request: {
+    method: 'PUT',
+    url: '/order/delete-order-user',
+    body: { orderId: 29, status: 0 },
+    ip: '::1'
+  }
+}

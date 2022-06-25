@@ -57,10 +57,9 @@ export interface IProduct {
   quantityInStock: number;
   priceEach: number;
   image: string;
+  otherPhotos: [];
   origin: string;
   discount: number;
-  soldQuantity: number;
-  sellerEmail: string;
   shopTypeId: number;
   description: string;
 }
@@ -99,8 +98,8 @@ export interface IInfoProduct {
   image?: string;
   origin?: string;
   discount?: number;
-  soldQuantity?: number;
   shopTypeId?: number;
+  otherImages: [];
 }
 
 export interface IProductList extends Array<IProduct> {}

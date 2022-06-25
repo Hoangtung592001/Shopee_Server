@@ -9,12 +9,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
-import {
-  IUserReq,
-} from '$types/interfaces';
+import { IUserReq } from '$types/interfaces';
 import { Roles } from '$core/decorators/roles.decorator';
 import { Role, TokenType } from '$types/enums';
 import { ISendNotificationBody } from './dto/sendNotification';
+import { UserData } from '$core/decorators/user.decorator';
 
 @Controller('notifications')
 export class NotificationController {
@@ -33,9 +32,10 @@ export class NotificationController {
   }
 
   @Post('send-notification')
-  async sendNotification(@Req() req: IUserReq) {
-    const body = req.body as ISendNotificationBody;
-    const { tokenType, ...user } = req.user;
-    return this.notificationService.sendNotification(user.id, body);
+  async sendNotification(
+    @UserData() member: Express.User,
+    @Body() body: ISendNotificationBody,
+  ) {
+    return this.notificationService.sendNotification(member.id, body);
   }
 }

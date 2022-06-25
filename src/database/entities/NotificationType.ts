@@ -18,10 +18,4 @@ export default class NotificationType {
 
   @Column({ name: 'notification_name', type: 'varchar', length: 255 })
   methodName: string;
-
-  @OneToMany(
-    () => Notification,
-    (Notification) => Notification.notificationType,
-  )
-  Notifications: Notification[];
 }

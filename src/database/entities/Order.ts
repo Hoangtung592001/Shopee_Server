@@ -44,6 +44,17 @@ export default class Order {
   address: string;
 
   @Column({
+    name: 'receiver_name',
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
+  receiverName: string;
+
+  @Column({ name: 'phone', type: 'varchar', length: 20, nullable: false })
+  phone: string;
+
+  @Column({
     name: 'customer_id',
     type: 'bigint',
     unsigned: true,
@@ -60,21 +71,12 @@ export default class Order {
   voucherId: number;
 
   @Column({
-    name: 'transferring_method_id',
-    type: 'bigint',
-    unsigned: true,
-    default: TransferringMethodStatus.Fast
-  })
-  transferringMethodId: number;
-
-  @Column({
     name: 'shipping_fee',
     type: 'double',
     unsigned: true,
     nullable: true,
   })
   shippingFee: number;
-
 
   /* -------------------------------------------------------------------------- */
   /*                                  Relation                                  */
@@ -83,10 +85,6 @@ export default class Order {
   @ManyToOne(() => Voucher)
   @JoinColumn({ name: 'voucher_id', referencedColumnName: 'id' })
   voucher: Voucher;
-
-  @ManyToOne(() => TransferringMethod)
-  @JoinColumn({ name: 'transferring_method_id', referencedColumnName: 'id' })
-  transferringMethod: TransferringMethod;
 
   @OneToMany(() => OrderDetail, (orderdetail) => orderdetail.order)
   orderdetails: OrderDetail[];

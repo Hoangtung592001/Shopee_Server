@@ -16,12 +16,6 @@ export default class TransferringMethod {
   })
   id: number;
 
-  @OneToMany(
-    () => Notification,
-    (Notification) => Notification.transferringMethod,
-  )
-  Notifications: Notification[];
-
   @Column({ name: 'method_name', type: 'varchar', length: 255 })
   methodName: string;
 }

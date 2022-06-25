@@ -1,8 +1,7 @@
+import { OrderStatus } from '$types/enums';
+
 export interface ISendNotificationBody {
-    title: string;
-    parcelCode: string;
-    transferringCode: string;
-    transferringMethodId: number;
-    notificationTypeId: number;
-    image: string;
+  receiverId: number;
+  orderId: number;
+  status: OrderStatus;
 }

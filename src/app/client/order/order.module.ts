@@ -11,7 +11,18 @@ import OrderCart from '$database/entities/OrderCart';
 import UserShop from '$database/entities/UserShop';
 import User from '$database/entities/User';
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderDetail, Product, Voucher, OrderCart, UserShop, User]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Order,
+      OrderDetail,
+      Product,
+      Voucher,
+      OrderCart,
+      UserShop,
+      User,
+    ]),
+    AuthModule,
+  ],
   controllers: [OrderController],
   providers: [OrderService],
 })
